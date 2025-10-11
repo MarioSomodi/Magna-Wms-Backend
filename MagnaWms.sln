@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34322.80
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagnaWms.Api", "MagnaWms.Api\MagnaWms.Api.csproj", "{C404FE31-5A76-483A-A7FF-90C938DAC8BA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagnaWms.Application", "MagnaWms.Application\MagnaWms.Application.csproj", "{5D31A60B-A2BF-4BDD-A912-23C53006F07E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagnaWms.Domain", "MagnaWms.Domain\MagnaWms.Domain.csproj", "{A6E39D81-C1B7-4FCE-B496-3ABA48E6966C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagnaWms.Infrastructure", "MagnaWms.Infrastructure\MagnaWms.Infrastructure.csproj", "{6F7B9D7B-24B7-496B-88F0-EEC556DC1615}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagnaWms.Forecasting", "MagnaWms.Forecasting\MagnaWms.Forecasting.csproj", "{E0AC3019-AEF6-47B9-955E-204BA141A629}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{56859A55-37B3-4B72-A888-C5D9DC73E3C9}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		..\.gitattributes = ..\.gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C404FE31-5A76-483A-A7FF-90C938DAC8BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C404FE31-5A76-483A-A7FF-90C938DAC8BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C404FE31-5A76-483A-A7FF-90C938DAC8BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C404FE31-5A76-483A-A7FF-90C938DAC8BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D31A60B-A2BF-4BDD-A912-23C53006F07E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D31A60B-A2BF-4BDD-A912-23C53006F07E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D31A60B-A2BF-4BDD-A912-23C53006F07E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D31A60B-A2BF-4BDD-A912-23C53006F07E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6E39D81-C1B7-4FCE-B496-3ABA48E6966C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6E39D81-C1B7-4FCE-B496-3ABA48E6966C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6E39D81-C1B7-4FCE-B496-3ABA48E6966C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6E39D81-C1B7-4FCE-B496-3ABA48E6966C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F7B9D7B-24B7-496B-88F0-EEC556DC1615}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F7B9D7B-24B7-496B-88F0-EEC556DC1615}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F7B9D7B-24B7-496B-88F0-EEC556DC1615}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F7B9D7B-24B7-496B-88F0-EEC556DC1615}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0AC3019-AEF6-47B9-955E-204BA141A629}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0AC3019-AEF6-47B9-955E-204BA141A629}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0AC3019-AEF6-47B9-955E-204BA141A629}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0AC3019-AEF6-47B9-955E-204BA141A629}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {447BBC92-0CB2-49F6-A711-8DD1B18B5250}
+	EndGlobalSection
+EndGlobal
