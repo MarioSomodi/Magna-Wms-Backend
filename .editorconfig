@@ -280,3 +280,10 @@ dotnet_diagnostic.CA2327.severity = none
 
 # IDE0046: Convert to conditional expression
 dotnet_diagnostic.IDE0046.severity = none
+
+dotnet_diagnostic.CA1308.severity = none
+# Disable all analyzer diagnostics for EF Core Migrations
+[**/Migrations/*.cs]
+# Turn off all analyzer rules inside migrations
+dotnet_analyzer_diagnostic.severity = none
+dotnet_diagnostic.CA1861.severity = none
