@@ -9,7 +9,8 @@ public static class Program
         {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddControllers();
+        builder.AddSerilogLogging();
+        
         builder.Services
             .AddControllers();
 
@@ -21,6 +22,8 @@ public static class Program
         WebApplication app = builder.Build();
 
         app.UseCorrelationId();
+        // pushes CorrelationId/UserId into LogContext
+        app.UseRequestContextLogging();
         app.UseProblemDetailsSupport();
             app.UseHttpsRedirection();
             app.UseAuthorization();
