@@ -15,8 +15,10 @@ public static class Program
 
         builder.Services
             .AddApiVersioningWithExplorer()
+            .AddProblemDetailsSupport(builder.Environment)
 
         WebApplication app = builder.Build();
+        app.UseProblemDetailsSupport();
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();

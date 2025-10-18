@@ -2,6 +2,7 @@
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
+    <PackageReference Include="Hellang.Middleware.ProblemDetails" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MagnaWms.Persistence\MagnaWms.Persistence.csproj" />

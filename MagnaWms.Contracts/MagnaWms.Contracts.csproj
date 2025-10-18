@@ -1,0 +1,5 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\MagnaWms.Domain\MagnaWms.Domain.csproj" />
+  </ItemGroup>
+</Project>
