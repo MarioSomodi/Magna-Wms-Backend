@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace MagnaWms.Api.Swagger;
+namespace MagnaWms.Api.Configuration.Options;
 
 public sealed class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
 {

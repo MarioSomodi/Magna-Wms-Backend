@@ -1,6 +1,7 @@
-﻿using MagnaWms.Domain.Common;
+﻿using MagnaWms.Domain.Core.Exceptions;
+using MagnaWms.Domain.WarehouseAggregate;
 
-namespace MagnaWms.Domain.Entities;
+namespace MagnaWms.Domain.LocationAggregate;
 
 /// <summary>
 /// Aggregate root represents a specific, addressable place inside a warehouse.

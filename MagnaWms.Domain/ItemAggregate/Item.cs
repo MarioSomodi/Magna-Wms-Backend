@@ -1,13 +1,13 @@
-﻿using MagnaWms.Domain.Common;
+﻿using MagnaWms.Domain.Core.Exceptions;
 
-namespace MagnaWms.Domain.Entities;
+namespace MagnaWms.Domain.ItemAggregate;
 
 /// <summary>
 /// Aggregate root representing a stock-keeping unit (SKU) or product managed by the WMS.
 /// Used across inbound, outbound, and inventory processes.
 /// </summary>
 public sealed class Item
-{    
+{
     // Needed for EF core init
     private Item() { }
 

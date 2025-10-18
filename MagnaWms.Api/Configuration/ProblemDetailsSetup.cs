@@ -1,12 +1,10 @@
 ﻿using Hellang.Middleware.ProblemDetails;
 using MagnaWms.Api.Behaviors;
-using Microsoft.AspNetCore.Mvc;
 using ProblemDetailsFactory = Hellang.Middleware.ProblemDetails.ProblemDetailsFactory;
-using ProblemDetailsOptions = Hellang.Middleware.ProblemDetails.ProblemDetailsOptions;
 
-namespace MagnaWms.Api.Extensions;
+namespace MagnaWms.Api.Configuration;
 
-public static class ProblemDetailsExtensions
+public static class ProblemDetailsSetup
 {
     public static IServiceCollection AddProblemDetailsSupport(this IServiceCollection services, IWebHostEnvironment env)
     {
@@ -29,12 +27,5 @@ public static class ProblemDetailsExtensions
         services.AddSingleton<ProblemDetailsFactory, MagnaProblemDetailsFactory>();
 
         return services;
-    }
-
-    public static WebApplication UseProblemDetailsSupport(this WebApplication app)
-    {
-        // ProblemDetails must be early in the pipeline to catch exceptions
-        app.UseProblemDetails();
-        return app;
     }
 }

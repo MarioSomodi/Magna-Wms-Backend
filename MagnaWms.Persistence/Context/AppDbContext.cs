@@ -1,8 +1,10 @@
-﻿using MagnaWms.Domain.Entities;
+﻿using MagnaWms.Domain.ItemAggregate;
+using MagnaWms.Domain.LocationAggregate;
+using MagnaWms.Domain.WarehouseAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace MagnaWms.Persistence;
+namespace MagnaWms.Persistence.Context;
 
 public sealed class AppDbContext : DbContext
 {

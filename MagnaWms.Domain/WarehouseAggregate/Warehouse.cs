@@ -1,6 +1,7 @@
-﻿using MagnaWms.Domain.Common;
+﻿using MagnaWms.Domain.Core.Exceptions;
+using MagnaWms.Domain.LocationAggregate;
 
-namespace MagnaWms.Domain.Entities;
+namespace MagnaWms.Domain.WarehouseAggregate;
 
 /// <summary>
 /// Represents a physical warehouse or distribution center.

@@ -1,17 +1,17 @@
 ﻿using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-namespace MagnaWms.Api.Extensions;
+namespace MagnaWms.Api.Configuration;
 
-public static class OpenTelemetryExtensions
+public static class OpenTelemetrySetup
 {
     public static IServiceCollection AddOpenTelemetryStubs(this IServiceCollection services, string serviceName)
     {
         services.AddOpenTelemetry()
             .ConfigureResource(r => r
                 .AddService(
-                    serviceName: serviceName, 
-                    serviceVersion: typeof(OpenTelemetryExtensions).Assembly.GetName().Version?.ToString() ?? "1.0.0"))
+                    serviceName: serviceName,
+                    serviceVersion: typeof(OpenTelemetrySetup).Assembly.GetName().Version?.ToString() ?? "1.0.0"))
             .WithTracing(b =>
             {
                 b.AddAspNetCoreInstrumentation(o =>

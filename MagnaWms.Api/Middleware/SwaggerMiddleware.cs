@@ -1,29 +1,9 @@
-﻿using System.Reflection;
-using Asp.Versioning.ApiExplorer;
-using MagnaWms.Api.Swagger;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerGen;
+﻿using Asp.Versioning.ApiExplorer;
 
-namespace MagnaWms.Api.Extensions;
+namespace MagnaWms.Api.Middleware;
 
-public static class SwaggerExtensions
+public static class SwaggerMiddleware
 {
-    public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
-    {
-        services.AddEndpointsApiExplorer();
-
-        services.AddSwaggerGen(options =>
-        {
-            string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
-            options.EnableAnnotations();
-        });
-
-        services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-        return services;
-    }
-
     public static WebApplication UseSwaggerUIWithVersions(this WebApplication app)
     {
         IWebHostEnvironment env = app.Environment;
@@ -55,5 +35,4 @@ public static class SwaggerExtensions
 
         return app;
     }
-
 }

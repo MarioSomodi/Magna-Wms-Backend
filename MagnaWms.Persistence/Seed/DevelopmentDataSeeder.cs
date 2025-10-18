@@ -1,5 +1,9 @@
 ﻿using Bogus;
-using MagnaWms.Domain.Entities;
+using Bogus.DataSets;
+using MagnaWms.Domain.ItemAggregate;
+using MagnaWms.Domain.LocationAggregate;
+using MagnaWms.Domain.WarehouseAggregate;
+using MagnaWms.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -50,15 +54,9 @@ public sealed class DevelopmentDataSeeder : IHostedService
             return;
         }
 
-        db.Warehouses.Add(new Warehouse
-        {
-            Code = "ZAG01",
-            Name = "Zagreb Central Distribution Center",
-            TimeZone = "Europe/Zagreb",
-            IsActive = true,
-            CreatedUtc = DateTime.UtcNow,
-            UpdatedUtc = DateTime.UtcNow
-        });
+        var warehouse = new Warehouse(code: "ZAG01", name: "Zagreb Central Distribution Center", timeZone: "Europe/Zagreb");
+
+        db.Warehouses.Add(warehouse);
 
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
     }
@@ -74,33 +72,9 @@ public sealed class DevelopmentDataSeeder : IHostedService
 
         Location[] locations =
         [
-            new Location
-            {
-                WarehouseID = warehouse.WarehouseID,
-                Code = "STAGE-01",
-                Type = LocationTypes.Stage,
-                MaxQty = 500,
-                CreatedUtc = DateTime.UtcNow,
-                UpdatedUtc = DateTime.UtcNow
-            },
-            new Location
-            {
-                WarehouseID = warehouse.WarehouseID,
-                Code = "RACK-A1",
-                Type = LocationTypes.Rack,
-                MaxQty = 1000,
-                CreatedUtc = DateTime.UtcNow,
-                UpdatedUtc = DateTime.UtcNow
-            },
-            new Location
-            {
-                WarehouseID = warehouse.WarehouseID,
-                Code = "BIN-001",
-                Type = LocationTypes.Bin,
-                MaxQty = 250,
-                CreatedUtc = DateTime.UtcNow,
-                UpdatedUtc = DateTime.UtcNow
-            }
+            new Location(warehouseId: warehouse.WarehouseID, code: "STAGE-01", type: LocationTypes.Stage, maxQty: 500),
+            new Location(warehouseId: warehouse.WarehouseID, code: "RACK-A1", type: LocationTypes.Rack, maxQty: 1000),
+            new Location(warehouseId: warehouse.WarehouseID, code: "BIN-001", type: LocationTypes.Bin, maxQty: 250),
         ];
 
         db.Locations.AddRange(locations);

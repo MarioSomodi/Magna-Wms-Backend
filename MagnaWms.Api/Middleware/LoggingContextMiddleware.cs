@@ -1,20 +1,10 @@
 ﻿using Serilog;
 using Serilog.Context;
 
-namespace MagnaWms.Api.Extensions;
+namespace MagnaWms.Api.Middleware;
 
-public static class LoggingExtensions
+public static class LoggingContextMiddleware
 {
-    public static WebApplicationBuilder AddSerilogLogging(this WebApplicationBuilder builder)
-    {
-        Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .CreateLogger();
-
-        builder.Host.UseSerilog();
-        return builder;
-    }
-
     /// <summary>
     /// Push CorrelationId and UserId into Serilog's LogContext so all logs have them.
     /// Must run before UseSerilogRequestLogging().
