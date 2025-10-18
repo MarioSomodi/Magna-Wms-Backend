@@ -3,8 +3,6 @@ namespace MagnaWms.Api;
 
 public static class Program
 {
-    public class Program
-    {
         public static void Main(string[] args)
         {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -16,6 +14,7 @@ public static class Program
 
         builder.Services
             .AddApiVersioningWithExplorer()
+            .AddSwaggerDocumentation()
             .AddProblemDetailsSupport(builder.Environment)
             .AddOpenTelemetryStubs(serviceName: "MagnaWms.Api")
 
@@ -25,6 +24,7 @@ public static class Program
         // pushes CorrelationId/UserId into LogContext
         app.UseRequestContextLogging();
         app.UseProblemDetailsSupport();
+        app.UseSwaggerUIWithVersions();
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
