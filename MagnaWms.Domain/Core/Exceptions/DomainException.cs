@@ -1,4 +1,4 @@
-﻿namespace MagnaWms.Domain.Common;
+﻿namespace MagnaWms.Domain.Core.Exceptions;
 
 /// <summary>
 /// Represents a business rule violation inside the domain layer.

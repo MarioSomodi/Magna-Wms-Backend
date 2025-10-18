@@ -1,5 +1,8 @@
-using MagnaWms.Api.Extensions;
-using MagnaWms.Application;
+using Hellang.Middleware.ProblemDetails;
+using MagnaWms.Api.Configuration;
+using MagnaWms.Api.Middleware;
+using MagnaWms.Application.Core;
+
 namespace MagnaWms.Api;
 
 public static class Program
@@ -26,7 +29,7 @@ public static class Program
         app.UseCorrelationId();
         // pushes CorrelationId/UserId into LogContext
         app.UseRequestContextLogging();
-        app.UseProblemDetailsSupport();
+        app.UseProblemDetails();
         app.UseSwaggerUIWithVersions();
         app.UseHttpsRedirection();
         app.UseAuthorization();

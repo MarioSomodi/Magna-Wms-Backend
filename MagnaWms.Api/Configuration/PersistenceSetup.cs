@@ -1,10 +1,10 @@
-﻿using MagnaWms.Persistence;
-using MagnaWms.Persistence.Extensions;
+﻿using MagnaWms.Persistence.Context;
+using MagnaWms.Persistence.Seed;
 using Microsoft.EntityFrameworkCore;
 
-namespace MagnaWms.Api.Extensions;
+namespace MagnaWms.Api.Configuration;
 
-public static class PersistenceExtensions
+public static class PersistenceSetup
 {
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration config)
     {

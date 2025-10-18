@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Primitives;
 
-namespace MagnaWms.Api.Extensions;
+namespace MagnaWms.Api.Middleware;
 
 public static class CorrelationIdExtensions
 {

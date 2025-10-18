@@ -1,8 +1,8 @@
 ﻿using Asp.Versioning;
 
-namespace MagnaWms.Api.Extensions;
+namespace MagnaWms.Api.Configuration;
 
-public static class ApiVersioningExtensions
+public static class ApiVersioningSetup
 {
     public static IServiceCollection AddApiVersioningWithExplorer(this IServiceCollection services)
     {

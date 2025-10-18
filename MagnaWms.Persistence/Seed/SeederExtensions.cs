@@ -1,8 +1,7 @@
-﻿using MagnaWms.Persistence.Seed;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace MagnaWms.Persistence.Extensions;
+namespace MagnaWms.Persistence.Seed;
 
 public static class SeederExtensions
 {

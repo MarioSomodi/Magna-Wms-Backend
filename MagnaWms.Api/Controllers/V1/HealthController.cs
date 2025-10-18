@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
 using MagnaWms.Contracts.Errors;
-using MagnaWms.Persistence;
+using MagnaWms.Persistence.Context;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 

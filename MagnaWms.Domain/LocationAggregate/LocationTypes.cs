@@ -1,4 +1,4 @@
-﻿namespace MagnaWms.Domain.Entities;
+﻿namespace MagnaWms.Domain.LocationAggregate;
 
 public static class LocationTypes
 {

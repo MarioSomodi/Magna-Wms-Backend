@@ -1,4 +1,4 @@
-﻿using MagnaWms.Domain.Entities;
+﻿using MagnaWms.Domain.Warehouse;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

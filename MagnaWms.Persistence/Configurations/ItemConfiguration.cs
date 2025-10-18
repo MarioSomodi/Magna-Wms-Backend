@@ -1,4 +1,4 @@
-﻿using MagnaWms.Domain.Entities;
+﻿using MagnaWms.Domain.ItemAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
