@@ -17,6 +17,7 @@ public static class Program
             .AddSwaggerDocumentation()
             .AddProblemDetailsSupport(builder.Environment)
             .AddOpenTelemetryStubs(serviceName: "MagnaWms.Api")
+            .AddPersistence(builder.Configuration);
 
         WebApplication app = builder.Build();
 
