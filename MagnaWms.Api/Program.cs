@@ -18,6 +18,8 @@ public static class Program
             .AddProblemDetailsSupport(builder.Environment)
 
         WebApplication app = builder.Build();
+
+        app.UseCorrelationId();
         app.UseProblemDetailsSupport();
             app.UseHttpsRedirection();
             app.UseAuthorization();
