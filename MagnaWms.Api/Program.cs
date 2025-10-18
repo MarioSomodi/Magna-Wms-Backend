@@ -16,6 +16,7 @@ public static class Program
         builder.Services
             .AddApiVersioningWithExplorer()
             .AddProblemDetailsSupport(builder.Environment)
+            .AddOpenTelemetryStubs(serviceName: "MagnaWms.Api")
 
         WebApplication app = builder.Build();
 
