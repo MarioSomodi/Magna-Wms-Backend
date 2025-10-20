@@ -1,4 +1,4 @@
-﻿using MagnaWms.Domain.Warehouse;
+﻿using MagnaWms.Domain.WarehouseAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,7 +10,7 @@ public sealed class WarehouseConfiguration : IEntityTypeConfiguration<Warehouse>
     {
         builder.ToTable("Warehouse");
 
-        builder.HasKey(x => x.WarehouseID);
+        builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Code)
             .IsRequired()
@@ -38,7 +38,5 @@ public sealed class WarehouseConfiguration : IEntityTypeConfiguration<Warehouse>
 
         builder.Property(x => x.RowVersion)
             .IsRowVersion();
-
-        builder.Navigation("_locations").AutoInclude(false);
     }
 }

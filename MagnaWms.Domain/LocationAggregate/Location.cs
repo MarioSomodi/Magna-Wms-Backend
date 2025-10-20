@@ -1,4 +1,5 @@
 ﻿using MagnaWms.Domain.Core.Exceptions;
+using MagnaWms.Domain.Core.Primitives;
 using MagnaWms.Domain.WarehouseAggregate;
 
 namespace MagnaWms.Domain.LocationAggregate;
@@ -8,7 +9,7 @@ namespace MagnaWms.Domain.LocationAggregate;
 /// Examples: "RACK-A1", "BIN-001", "STAGE-01".
 /// Used for putaway, picking, and physical stock tracking.
 /// </summary>
-public sealed class Location
+public sealed class Location : AggregateRoot
 {
     // Needed for EF core init
     private Location() { }
@@ -23,8 +24,6 @@ public sealed class Location
         CreatedUtc = DateTime.UtcNow;
         UpdatedUtc = DateTime.UtcNow;
     }
-
-    public long LocationID { get; private set; }
 
     public long WarehouseID { get; private set; }
 
@@ -49,16 +48,6 @@ public sealed class Location
     /// Indicates if this location is active and used in operations.
     /// </summary>
     public bool IsActive { get; private set; } = true;
-
-    /// <summary>
-    /// UTC timestamp when the record was created.
-    /// </summary>
-    public DateTime CreatedUtc { get; private set; }
-
-    /// <summary>
-    /// UTC timestamp when the record was last updated.
-    /// </summary>
-    public DateTime UpdatedUtc { get; private set; }
 
     public Warehouse Warehouse { get; private set; } = default!;
 
@@ -120,7 +109,7 @@ public sealed class Location
             throw new DomainException("Location type cannot be empty.");
         }
 
-        if (!LocationTypes.All.Contains(type.ToUpperInvariant()))
+        if (!LocationTypes.All.Contains(type, StringComparer.OrdinalIgnoreCase))
         {
             throw new DomainException($"Invalid location type '{type}'.");
         }
@@ -137,7 +126,5 @@ public sealed class Location
 
         MaxQty = maxQty;
     }
-
-    private void Touch() => UpdatedUtc = DateTime.UtcNow;
     #endregion
 }

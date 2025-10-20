@@ -1,4 +1,5 @@
 ﻿using MagnaWms.Domain.Core.Exceptions;
+using MagnaWms.Domain.Core.Primitives;
 using MagnaWms.Domain.LocationAggregate;
 
 namespace MagnaWms.Domain.WarehouseAggregate;
@@ -7,10 +8,8 @@ namespace MagnaWms.Domain.WarehouseAggregate;
 /// Represents a physical warehouse or distribution center.
 /// The Aggregate root for storage, inventory, and operational activities.
 /// </summary>
-public sealed class Warehouse
+public sealed class Warehouse : AggregateRoot
 {
-    private readonly List<Location> _locations = new();
-
     // Needed for EF core init
     private Warehouse() { }
 
@@ -24,8 +23,6 @@ public sealed class Warehouse
         CreatedUtc = DateTime.UtcNow;
         UpdatedUtc = DateTime.UtcNow;
     }
-    public long WarehouseID { get; private set; }
-
     /// <summary>
     /// Unique warehouse code (e.g., "ZAG01"). 
     /// Short human-readable identifier used across systems.
@@ -46,27 +43,6 @@ public sealed class Warehouse
     /// Indicates if this warehouse is operational.
     /// </summary>
     public bool IsActive { get; private set; } = true;
-
-    /// <summary>
-    /// UTC timestamp when the record was created.
-    /// </summary>
-    public DateTime CreatedUtc { get; private set; }
-
-    /// <summary>
-    /// UTC timestamp when the record was last updated.
-    /// </summary>
-    public DateTime UpdatedUtc { get; private set; }
-
-    /// <summary>
-    /// Concurrency token (ROWVERSION). 
-    /// Updated automatically on every modification to prevent lost updates.
-    /// </summary>
-    public byte[] RowVersion { get; private set; } = default!;
-
-    /// <summary>
-    /// Collection of locations (storage areas, racks, bins) belonging to this warehouse.
-    /// </summary>
-    public IReadOnlyCollection<Location> Locations => _locations.AsReadOnly();
 
     #region Business rules
     public void Rename(string newName)
@@ -134,7 +110,5 @@ public sealed class Warehouse
 
         TimeZone = tz.Trim();
     }
-
-    private void Touch() => UpdatedUtc = DateTime.UtcNow;
     #endregion
 }

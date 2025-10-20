@@ -12,7 +12,7 @@ public sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
 
         builder.ToTable("Location", tb => tb.HasCheckConstraint("CK_Location_Type", $"Type IN ('{allowedTypes}')"));
 
-        builder.HasKey(x => x.LocationID);
+        builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Code)
             .IsRequired()
@@ -34,6 +34,9 @@ public sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
 
         builder.Property(x => x.UpdatedUtc)
             .HasDefaultValueSql("SYSUTCDATETIME()");
+
+        builder.Property(x => x.RowVersion)
+            .IsRowVersion();
 
         builder.HasOne(l => l.Warehouse)
             .WithMany()

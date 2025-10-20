@@ -54,21 +54,79 @@ public sealed class DevelopmentDataSeeder : IHostedService
             return;
         }
 
-        var warehouse = new Warehouse(code: "ZAG01", name: "Zagreb Central Distribution Center", timeZone: "Europe/Zagreb");
+        Randomizer.Seed = new Random(8675309);
 
-        db.Warehouses.Add(warehouse);
+        Faker<Warehouse> faker = new Faker<Warehouse>("en")
+            .CustomInstantiator(f => new Warehouse(
+                code: $"ZAG{f.IndexFaker + 1:D2}",
+                name: $"{f.Address.City()} Distribution Center",
+                timeZone: "Europe/Zagreb"
+            ));
+
+        List<Warehouse> warehouses = faker.Generate(1);
+        db.Warehouses.AddRange(warehouses);
 
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
     }
 
     private static async Task SeedLocationsAsync(AppDbContext db, CancellationToken ct)
     {
-        if (await db.Locations.AnyAsync(ct).ConfigureAwait(false))
+        Warehouse warehouse = await db.Warehouses.FirstAsync(ct).ConfigureAwait(false);
+
+        // Get existing codes to avoid duplicates
+        HashSet<string> existingCodes = await db.Locations
+            .AsNoTracking()
+            .Where(l => l.WarehouseID == warehouse.Id)
+            .Select(l => l.Code)
+            .ToHashSetAsync(ct).ConfigureAwait(false);
+
+        if (existingCodes.Count >= 5)
         {
             return;
         }
 
-        Warehouse warehouse = await db.Warehouses.FirstAsync(ct).ConfigureAwait(false);
+        Randomizer.Seed = new Random(8675309);
+        var faker = new Faker("en");
+
+        var locations = new List<Location>();
+        for (int i = 0; i < 5; i++)
+        {
+            string type = faker.PickRandom(LocationTypes.All);
+            string code;
+            do
+            {
+                code = type switch
+                {
+                    LocationTypes.Stage => $"STAGE-{faker.Random.Int(1, 999):D3}",
+                    LocationTypes.Rack => $"RACK-{faker.Random.Int(1, 999):D3}",
+                    LocationTypes.Bin => $"BIN-{faker.Random.Int(1, 999):D3}",
+                    LocationTypes.Floor => $"FLOOR-{faker.Random.Int(1, 999):D3}",
+                    _ => $"LOC-{faker.Random.Int(1, 999):D3}"
+                };
+            }
+            while (existingCodes.Contains(code));
+
+            existingCodes.Add(code);
+
+            int maxQty = type switch
+            {
+                LocationTypes.Rack => faker.Random.Int(500, 2000),
+                LocationTypes.Bin => faker.Random.Int(100, 500),
+                LocationTypes.Stage => faker.Random.Int(300, 800),
+                _ => faker.Random.Int(200, 1000)
+            };
+
+            locations.Add(new Location(
+                warehouseId: warehouse.Id,
+                code: code,
+                type: type,
+                maxQty: maxQty
+            ));
+        }
+
+        db.Locations.AddRange(locations);
+        await db.SaveChangesAsync(ct).ConfigureAwait(false);
+    }
 
     private static async Task SeedUnitOfMeasuresAsync(AppDbContext db, CancellationToken ct)
     {
