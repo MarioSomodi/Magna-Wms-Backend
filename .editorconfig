@@ -2,7 +2,7 @@ root = true
 
 # C# files
 [*.cs]
-
+dotnet_diagnostic.MA0004.severity = none
 #### Core EditorConfig Options ####
 
 # Indentation and spacing

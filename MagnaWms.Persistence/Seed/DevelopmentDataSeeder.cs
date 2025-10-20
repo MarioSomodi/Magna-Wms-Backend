@@ -37,19 +37,19 @@ public sealed class DevelopmentDataSeeder : IHostedService
         using IServiceScope scope = _serviceProvider.CreateScope();
         AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-        await db.Database.MigrateAsync(cancellationToken).ConfigureAwait(false); // ensure DB up to date
+        await db.Database.MigrateAsync(cancellationToken); // ensure DB up to date
 
-        await SeedWarehouseAsync(db, cancellationToken).ConfigureAwait(false);
-        await SeedLocationsAsync(db, cancellationToken).ConfigureAwait(false);
-        await SeedUnitOfMeasuresAsync(db, cancellationToken).ConfigureAwait(false);
-        await SeedItemsAsync(db, cancellationToken).ConfigureAwait(false);
+        await SeedWarehouseAsync(db, cancellationToken);
+        await SeedLocationsAsync(db, cancellationToken);
+        await SeedUnitOfMeasuresAsync(db, cancellationToken);
+        await SeedItemsAsync(db, cancellationToken);
 
         _logger.LogInformation("Development data seeding completed.");
     }
 
     private static async Task SeedWarehouseAsync(AppDbContext db, CancellationToken ct)
     {
-        if (await db.Warehouses.AnyAsync(ct).ConfigureAwait(false))
+        if (await db.Warehouses.AnyAsync(ct))
         {
             return;
         }
@@ -66,19 +66,19 @@ public sealed class DevelopmentDataSeeder : IHostedService
         List<Warehouse> warehouses = faker.Generate(1);
         db.Warehouses.AddRange(warehouses);
 
-        await db.SaveChangesAsync(ct).ConfigureAwait(false);
+        await db.SaveChangesAsync(ct);
     }
 
     private static async Task SeedLocationsAsync(AppDbContext db, CancellationToken ct)
     {
-        Warehouse warehouse = await db.Warehouses.FirstAsync(ct).ConfigureAwait(false);
+        Warehouse warehouse = await db.Warehouses.FirstAsync(ct);
 
         // Get existing codes to avoid duplicates
         HashSet<string> existingCodes = await db.Locations
             .AsNoTracking()
             .Where(l => l.WarehouseID == warehouse.Id)
             .Select(l => l.Code)
-            .ToHashSetAsync(ct).ConfigureAwait(false);
+            .ToHashSetAsync(ct);
 
         if (existingCodes.Count >= 5)
         {
@@ -125,12 +125,12 @@ public sealed class DevelopmentDataSeeder : IHostedService
         }
 
         db.Locations.AddRange(locations);
-        await db.SaveChangesAsync(ct).ConfigureAwait(false);
+        await db.SaveChangesAsync(ct);
     }
 
     private static async Task SeedUnitOfMeasuresAsync(AppDbContext db, CancellationToken ct)
     {
-        HashSet<string> existing = await db.UnitOfMeasures.AsNoTracking().Select(u => u.Symbol).ToHashSetAsync(StringComparer.OrdinalIgnoreCase, ct).ConfigureAwait(false);
+        HashSet<string> existing = await db.UnitOfMeasures.AsNoTracking().Select(u => u.Symbol).ToHashSetAsync(StringComparer.OrdinalIgnoreCase, ct);
 
         (string, string)[] required =
         [
@@ -151,12 +151,12 @@ public sealed class DevelopmentDataSeeder : IHostedService
         }
 
         db.UnitOfMeasures.AddRange(newUnits);
-        await db.SaveChangesAsync(ct).ConfigureAwait(false);
+        await db.SaveChangesAsync(ct);
     }
 
     private static async Task SeedItemsAsync(AppDbContext db, CancellationToken ct)
     {
-        if (await db.Items.AnyAsync(ct).ConfigureAwait(false))
+        if (await db.Items.AnyAsync(ct))
         {
             return;
         }
@@ -165,7 +165,7 @@ public sealed class DevelopmentDataSeeder : IHostedService
             .AsNoTracking()
             .Select(u => new { u.Id, u.Symbol })
             .ToListAsync(ct)
-            .ConfigureAwait(false);
+            ;
 
         if (uoms.Count == 0)
         {
@@ -196,7 +196,7 @@ public sealed class DevelopmentDataSeeder : IHostedService
 
         List<Item> items = faker.Generate(10);
         db.Items.AddRange(items);
-        await db.SaveChangesAsync(ct).ConfigureAwait(false);
+        await db.SaveChangesAsync(ct);
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

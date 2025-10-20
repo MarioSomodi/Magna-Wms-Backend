@@ -31,7 +31,7 @@ public static class CorrelationIdMiddleware
             // Echo back in response headers
             context.Response.Headers[HeaderName] = cid.ToString();
 
-            await next().ConfigureAwait(false);
+            await next();
         });
 
         return app;

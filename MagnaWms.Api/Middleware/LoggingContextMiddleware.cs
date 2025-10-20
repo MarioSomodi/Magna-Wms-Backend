@@ -25,7 +25,7 @@ public static class LoggingContextMiddleware
             using (LogContext.PushProperty("CorrelationId", cid ?? "n/a"))
             using (LogContext.PushProperty("UserId", userId ?? "anonymous"))
             {
-                await next().ConfigureAwait(false);
+                await next();
             }
         });
 
