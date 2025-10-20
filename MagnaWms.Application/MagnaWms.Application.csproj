@@ -6,4 +6,7 @@
     <ProjectReference Include="..\MagnaWms.Contracts\MagnaWms.Contracts.csproj" />
     <ProjectReference Include="..\MagnaWms.Domain\MagnaWms.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\Contracts\" />
+  </ItemGroup>
 </Project>

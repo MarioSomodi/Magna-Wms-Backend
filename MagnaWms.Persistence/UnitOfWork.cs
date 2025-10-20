@@ -1,10 +1,92 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MagnaWms.Application.Core.Contracts;
+using MagnaWms.Domain.Core.Primitives;
+using MagnaWms.Persistence.Context;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace MagnaWms.Persistence;
-internal class UnitOfWork
+
+/// <summary>
+/// EF Core implementation of the Unit of Work pattern.
+/// Wraps the AppDbContext and provides transactional consistency
+/// across multiple repositories or operations.
+/// </summary>
+public sealed class UnitOfWork(AppDbContext dbContext) : IUnitOfWork, IAsyncDisposable
 {
+    private readonly AppDbContext _dbContext = dbContext;
+    private IDbContextTransaction? _currentTransaction;
+
+    /// <inheritdoc />
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+    /// <inheritdoc />
+    public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
+    {
+        if (_currentTransaction != null)
+        {
+            return;
+        }
+
+        _currentTransaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
+    {
+        if (_currentTransaction == null)
+        {
+            return;
+        }
+
+        try
+{
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _currentTransaction.CommitAsync(cancellationToken);
+        }
+        catch
+        {
+            await RollbackTransactionAsync(cancellationToken);
+            throw;
+        }
+        finally
+        {
+            await DisposeTransactionAsync();
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
+    {
+        if (_currentTransaction == null)
+        {
+            return;
+        }
+
+        await _currentTransaction.RollbackAsync(cancellationToken);
+        await DisposeTransactionAsync();
+    }
+
+    private async Task DisposeTransactionAsync()
+    {
+        if (_currentTransaction == null)
+        {
+            return;
+        }
+
+        await _currentTransaction.DisposeAsync();
+        _currentTransaction = null;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_currentTransaction is not null)
+        {
+            await _currentTransaction.DisposeAsync();
+        }
+
+        await _dbContext.DisposeAsync();
+    }
 }
