@@ -1,5 +1,6 @@
 ﻿using MagnaWms.Domain.ItemAggregate;
 using MagnaWms.Domain.LocationAggregate;
+using MagnaWms.Domain.UnitOfMeasureAggregate;
 using MagnaWms.Domain.WarehouseAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -15,6 +16,7 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<Warehouse> Warehouses => Set<Warehouse>();
     public DbSet<Location> Locations => Set<Location>();
+    public DbSet<UnitOfMeasure> UnitOfMeasures => Set<UnitOfMeasure>();
     public DbSet<Item> Items => Set<Item>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

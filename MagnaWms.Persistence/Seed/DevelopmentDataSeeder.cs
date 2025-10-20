@@ -1,7 +1,7 @@
 ﻿using Bogus;
-using Bogus.DataSets;
 using MagnaWms.Domain.ItemAggregate;
 using MagnaWms.Domain.LocationAggregate;
+using MagnaWms.Domain.UnitOfMeasureAggregate;
 using MagnaWms.Domain.WarehouseAggregate;
 using MagnaWms.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +16,6 @@ public sealed class DevelopmentDataSeeder : IHostedService
     private readonly IServiceProvider _serviceProvider;
     private readonly IHostEnvironment _env;
     private readonly ILogger<DevelopmentDataSeeder> _logger;
-    private static readonly string[] sampleUnitsOfMesaure = ["pcs", "kg", "ltr", "box"];
 
     public DevelopmentDataSeeder(IServiceProvider serviceProvider, IHostEnvironment env, ILogger<DevelopmentDataSeeder> logger)
     {
@@ -42,6 +41,7 @@ public sealed class DevelopmentDataSeeder : IHostedService
 
         await SeedWarehouseAsync(db, cancellationToken).ConfigureAwait(false);
         await SeedLocationsAsync(db, cancellationToken).ConfigureAwait(false);
+        await SeedUnitOfMeasuresAsync(db, cancellationToken).ConfigureAwait(false);
         await SeedItemsAsync(db, cancellationToken).ConfigureAwait(false);
 
         _logger.LogInformation("Development data seeding completed.");
@@ -70,14 +70,29 @@ public sealed class DevelopmentDataSeeder : IHostedService
 
         Warehouse warehouse = await db.Warehouses.FirstAsync(ct).ConfigureAwait(false);
 
-        Location[] locations =
+    private static async Task SeedUnitOfMeasuresAsync(AppDbContext db, CancellationToken ct)
+    {
+        HashSet<string> existing = await db.UnitOfMeasures.AsNoTracking().Select(u => u.Symbol).ToHashSetAsync(StringComparer.OrdinalIgnoreCase, ct).ConfigureAwait(false);
+
+        (string, string)[] required =
         [
-            new Location(warehouseId: warehouse.WarehouseID, code: "STAGE-01", type: LocationTypes.Stage, maxQty: 500),
-            new Location(warehouseId: warehouse.WarehouseID, code: "RACK-A1", type: LocationTypes.Rack, maxQty: 1000),
-            new Location(warehouseId: warehouse.WarehouseID, code: "BIN-001", type: LocationTypes.Bin, maxQty: 250),
+            ("pcs", "Piece"),
+            ("kg", "Kilogram"),
+            ("ltr", "Liter"),
+            ("box", "Box")
         ];
 
-        db.Locations.AddRange(locations);
+        var newUnits = required
+            .Where(u => !existing.Contains(u.Item1))
+            .Select(u => new UnitOfMeasure(u.Item1, u.Item2))
+            .ToList();
+
+        if (newUnits.Count == 0)
+        {
+            return;
+        }
+
+        db.UnitOfMeasures.AddRange(newUnits);
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
     }
 
@@ -88,28 +103,40 @@ public sealed class DevelopmentDataSeeder : IHostedService
             return;
         }
 
+        var uoms = await db.UnitOfMeasures
+            .AsNoTracking()
+            .Select(u => new { u.Id, u.Symbol })
+            .ToListAsync(ct)
+            .ConfigureAwait(false);
+
+        if (uoms.Count == 0)
+        {
+            throw new InvalidOperationException("Cannot seed Items — UnitOfMeasure table is empty.");
+        }
+
         Randomizer.Seed = new Random(8675309);
 
         Faker<Item> faker = new Faker<Item>("en")
-            .RuleFor(i => i.Sku, f => $"SKU-{f.IndexFaker + 1:D3}")
-            .RuleFor(i => i.Name, f => f.Commerce.ProductName())
-            .RuleFor(i => i.BaseUom, f => f.PickRandom(sampleUnitsOfMesaure))
-            .RuleFor(i => i.BaseUomFull, (f, i) => i.BaseUom switch
+            .CustomInstantiator(f =>
             {
-                "pcs" => "pieces",
-                "kg" => "kilograms",
-                "ltr" => "liters",
-                "box" => "boxes",
-                _ => "units"
-            })
-            .RuleFor(i => i.StandardCost, f => Math.Round(f.Random.Decimal(5, 50), 2))
-            .RuleFor(i => i.LeadTimeDays, f => f.Random.Int(3, 14))
-            .RuleFor(i => i.ReorderPoint, f => f.Random.Int(10, 100))
-            .RuleFor(i => i.IsActive, _ => true)
-            .RuleFor(i => i.CreatedUtc, _ => DateTime.UtcNow)
-            .RuleFor(i => i.UpdatedUtc, _ => DateTime.UtcNow);
+                var randomUom = f.PickRandom(uoms);
+                string sku = $"SKU-{f.IndexFaker + 1:D3}";
+                string name = f.Commerce.ProductName();
+                decimal cost = Math.Round(f.Random.Decimal(5, 50), 2);
+                int leadTime = f.Random.Int(3, 14);
+                int reorder = f.Random.Int(10, 100);
 
-        List<Item> items = faker.Generate(5);
+                return new Item(
+                    sku: sku,
+                    name: name,
+                    unitOfMeasureId: randomUom.Id,
+                    standardCost: cost,
+                    leadTimeDays: leadTime,
+                    reorderPoint: reorder
+                );
+            });
+
+        List<Item> items = faker.Generate(10);
         db.Items.AddRange(items);
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
     }

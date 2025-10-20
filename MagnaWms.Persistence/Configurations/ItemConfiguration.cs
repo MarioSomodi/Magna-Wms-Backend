@@ -9,7 +9,7 @@ public sealed class ItemConfiguration : IEntityTypeConfiguration<Item>
     {
         builder.ToTable("Item");
 
-        builder.HasKey(x => x.ItemID);
+        builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Sku)
             .IsRequired()
@@ -21,14 +21,6 @@ public sealed class ItemConfiguration : IEntityTypeConfiguration<Item>
         builder.Property(x => x.Name)
             .IsRequired()
             .HasMaxLength(200);
-
-        builder.Property(x => x.BaseUom)
-            .IsRequired()
-            .HasMaxLength(16);
-
-        builder.Property(x => x.BaseUomFull)
-            .IsRequired()
-            .HasMaxLength(64);
 
         builder.Property(x => x.StandardCost)
             .HasColumnType("decimal(18,4)");
@@ -44,5 +36,16 @@ public sealed class ItemConfiguration : IEntityTypeConfiguration<Item>
 
         builder.Property(x => x.UpdatedUtc)
             .HasDefaultValueSql("SYSUTCDATETIME()");
+
+        builder.Property(x => x.RowVersion)
+            .IsRowVersion();
+
+        builder.HasOne(i => i.UnitOfMeasure)
+            .WithMany()
+            .HasForeignKey(i => i.UnitOfMeasureId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Navigation(i => i.UnitOfMeasure)
+            .AutoInclude();
     }
 }

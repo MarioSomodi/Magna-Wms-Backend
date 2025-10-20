@@ -1,4 +1,6 @@
 ﻿using MagnaWms.Domain.Core.Exceptions;
+using MagnaWms.Domain.Core.Primitives;
+using MagnaWms.Domain.UnitOfMeasureAggregate;
 
 namespace MagnaWms.Domain.ItemAggregate;
 
@@ -6,7 +8,7 @@ namespace MagnaWms.Domain.ItemAggregate;
 /// Aggregate root representing a stock-keeping unit (SKU) or product managed by the WMS.
 /// Used across inbound, outbound, and inventory processes.
 /// </summary>
-public sealed class Item
+public sealed class Item : AggregateRoot
 {
     // Needed for EF core init
     private Item() { }
@@ -14,23 +16,20 @@ public sealed class Item
     public Item(
         string sku,
         string name,
-        string baseUom,
-        string baseUomFull,
+        long unitOfMeasureId,
         decimal? standardCost = null,
         int? leadTimeDays = null,
         int? reorderPoint = null)
     {
         SetSku(sku);
         SetName(name);
-        SetBaseUom(baseUom, baseUomFull);
+        SetUnitOfMeasure(unitOfMeasureId);
         UpdateAttributes(standardCost, leadTimeDays, reorderPoint);
 
         IsActive = true;
         CreatedUtc = DateTime.UtcNow;
         UpdatedUtc = DateTime.UtcNow;
     }
-
-    public long ItemID { get; private set; }
 
     /// <summary>
     /// Stock Keeping Unit — globally unique business identifier (e.g., "ITEM-00123").
@@ -43,17 +42,12 @@ public sealed class Item
     public string Name { get; private set; } = default!;
 
     /// <summary>
-    /// Base unit of measure abbreviation (e.g., "kg", "pcs", "box").
-    /// Determines the smallest trackable inventory unit.
+    /// Navigation prop full name of the base unit of measure (e.g., "kilogram", "piece", "box") 
+    /// and abbreviation aka symbol (e.g., "kg", "pcs", "box"). provides clarity in UI and reporting.
     /// </summary>
-    public string BaseUom { get; private set; } = default!;
-
-    /// <summary>
-    /// Full name of the base unit of measure (e.g., "kilogram", "piece", "box").
-    /// Provides clarity in UI and reporting.
-    /// </summary>
-    public string BaseUomFull { get; private set; } = default!;
-
+    public UnitOfMeasure UnitOfMeasure { get; private set; } = default!;
+    public long UnitOfMeasureId { get; private set; }
+    
     /// <summary>
     /// Standard or average cost per base unit.
     /// Used for valuation and replenishment cost estimation.
@@ -77,15 +71,6 @@ public sealed class Item
     /// </summary>
     public bool IsActive { get; private set; } = true;
 
-    /// <summary>
-    /// UTC timestamp when the record was created.
-    /// </summary>
-    public DateTime CreatedUtc { get; private set; }
-
-    /// <summary>
-    /// UTC timestamp when the record was last updated.
-    /// </summary>
-    public DateTime UpdatedUtc { get; private set; }
     #region Business rules
     public void UpdateInfo(string name, decimal? cost, int? leadTimeDays, int? reorderPoint)
     {
@@ -137,23 +122,6 @@ public sealed class Item
         Name = name.Trim();
     }
 
-    private void SetBaseUom(string abbrev, string full)
-    {
-        if (string.IsNullOrWhiteSpace(abbrev))
-        {
-            throw new DomainException("BaseUom cannot be empty.");
-        }
-
-        if (string.IsNullOrWhiteSpace(full))
-        {
-            throw new DomainException("BaseUomFull cannot be empty.");
-        }
-
-        BaseUom = abbrev.Trim()
-                        .ToLowerInvariant();
-        BaseUomFull = full.Trim();
-    }
-
     private void UpdateAttributes(decimal? cost, int? leadTimeDays, int? reorderPoint)
     {
         if (leadTimeDays is < 0)
@@ -175,7 +143,14 @@ public sealed class Item
         LeadTimeDays = leadTimeDays;
         ReorderPoint = reorderPoint;
     }
+    private void SetUnitOfMeasure(long unitOfMeasureId)
+    {
+        if (unitOfMeasureId <= 0)
+        {
+            throw new DomainException("UnitOfMeasureId must be greater than zero.");
+        }
 
-    private void Touch() => UpdatedUtc = DateTime.UtcNow;
+        UnitOfMeasureId = unitOfMeasureId;
+    }
     #endregion
 }
