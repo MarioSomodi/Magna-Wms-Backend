@@ -1,4 +1,4 @@
-﻿namespace MagnaWms.Application.Core.Contracts;
+﻿namespace MagnaWms.Application.Core.Abstractions;
 
 /// <summary>
 /// Coordinates database changes

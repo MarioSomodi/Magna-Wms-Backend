@@ -1,4 +1,4 @@
-﻿using MagnaWms.Application.Core.Contracts;
+﻿using MagnaWms.Application.Core.Abstractions;
 using MagnaWms.Domain.Core.Primitives;
 using MagnaWms.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
