@@ -1,13 +1,16 @@
 ﻿using MagnaWms.Domain.LocationAggregate;
+using MagnaWms.Persistence.Configurations.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MagnaWms.Persistence.Configurations;
 
-public sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
+public sealed class LocationConfiguration : AggregateRootConfigurationBase<Location>
 {
-    public void Configure(EntityTypeBuilder<Location> builder)
+    public override void Configure(EntityTypeBuilder<Location> builder)
     {
+        base.Configure(builder);
+
         string allowedTypes = string.Join("','", LocationTypes.All);
 
         builder.ToTable("Location", tb => tb.HasCheckConstraint("CK_Location_Type", $"Type IN ('{allowedTypes}')"));
@@ -28,15 +31,6 @@ public sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
 
         builder.Property(x => x.IsActive)
             .HasDefaultValue(true);
-
-        builder.Property(x => x.CreatedUtc)
-            .HasDefaultValueSql("SYSUTCDATETIME()");
-
-        builder.Property(x => x.UpdatedUtc)
-            .HasDefaultValueSql("SYSUTCDATETIME()");
-
-        builder.Property(x => x.RowVersion)
-            .IsRowVersion();
 
         builder.HasOne(l => l.Warehouse)
             .WithMany()

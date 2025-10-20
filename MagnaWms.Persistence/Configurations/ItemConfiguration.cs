@@ -1,12 +1,15 @@
 ﻿using MagnaWms.Domain.ItemAggregate;
+using MagnaWms.Persistence.Configurations.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MagnaWms.Persistence.Configurations;
-public sealed class ItemConfiguration : IEntityTypeConfiguration<Item>
+public sealed class ItemConfiguration : AggregateRootConfigurationBase<Item>
 {
-    public void Configure(EntityTypeBuilder<Item> builder)
+    public override void Configure(EntityTypeBuilder<Item> builder)
     {
+        base.Configure(builder);
+
         builder.ToTable("Item");
 
         builder.HasKey(x => x.Id);
@@ -30,15 +33,6 @@ public sealed class ItemConfiguration : IEntityTypeConfiguration<Item>
 
         builder.Property(x => x.IsActive)
             .HasDefaultValue(true);
-
-        builder.Property(x => x.CreatedUtc)
-            .HasDefaultValueSql("SYSUTCDATETIME()");
-
-        builder.Property(x => x.UpdatedUtc)
-            .HasDefaultValueSql("SYSUTCDATETIME()");
-
-        builder.Property(x => x.RowVersion)
-            .IsRowVersion();
 
         builder.HasOne(i => i.UnitOfMeasure)
             .WithMany()

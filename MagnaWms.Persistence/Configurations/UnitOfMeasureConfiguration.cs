@@ -1,12 +1,13 @@
 ﻿using MagnaWms.Domain.UnitOfMeasureAggregate;
+using MagnaWms.Persistence.Configurations.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MagnaWms.Persistence.Configurations;
 
-public sealed class UnitOfMeasureConfiguration : IEntityTypeConfiguration<UnitOfMeasure>
+public sealed class UnitOfMeasureConfiguration : AggregateRootConfigurationBase<UnitOfMeasure>
 {
-    public void Configure(EntityTypeBuilder<UnitOfMeasure> builder)
+    public override void Configure(EntityTypeBuilder<UnitOfMeasure> builder)
     {
         builder.ToTable("UnitOfMeasure");
 
@@ -19,15 +20,6 @@ public sealed class UnitOfMeasureConfiguration : IEntityTypeConfiguration<UnitOf
         builder.Property(x => x.Name)
                .IsRequired()
                .HasMaxLength(64);
-
-        builder.Property(x => x.CreatedUtc)
-               .HasDefaultValueSql("SYSUTCDATETIME()");
-
-        builder.Property(x => x.UpdatedUtc)
-               .HasDefaultValueSql("SYSUTCDATETIME()");
-
-        builder.Property(x => x.RowVersion)
-               .IsRowVersion();
 
         builder.HasIndex(x => x.Symbol)
                .IsUnique();

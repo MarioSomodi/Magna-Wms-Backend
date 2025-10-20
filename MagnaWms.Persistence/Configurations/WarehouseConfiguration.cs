@@ -1,13 +1,16 @@
 ﻿using MagnaWms.Domain.WarehouseAggregate;
+using MagnaWms.Persistence.Configurations.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MagnaWms.Persistence.Configurations;
 
-public sealed class WarehouseConfiguration : IEntityTypeConfiguration<Warehouse>
+public sealed class WarehouseConfiguration : AggregateRootConfigurationBase<Warehouse>
 {
-    public void Configure(EntityTypeBuilder<Warehouse> builder)
+    public override void Configure(EntityTypeBuilder<Warehouse> builder)
     {
+        base.Configure(builder);
+
         builder.ToTable("Warehouse");
 
         builder.HasKey(x => x.Id);
@@ -29,14 +32,5 @@ public sealed class WarehouseConfiguration : IEntityTypeConfiguration<Warehouse>
 
         builder.Property(x => x.IsActive)
             .HasDefaultValue(true);
-
-        builder.Property(x => x.CreatedUtc)
-            .HasDefaultValueSql("SYSUTCDATETIME()");
-
-        builder.Property(x => x.UpdatedUtc)
-            .HasDefaultValueSql("SYSUTCDATETIME()");
-
-        builder.Property(x => x.RowVersion)
-            .IsRowVersion();
     }
 }
