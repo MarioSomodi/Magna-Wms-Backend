@@ -16,7 +16,8 @@ public abstract class AggregateRootConfigurationBase<TAggregateRoot> : IEntityTy
     {
         // Concurrency token (ROWVERSION)
         builder.Property(e => e.RowVersion)
-               .IsRowVersion();
+               .IsRowVersion()
+               .IsConcurrencyToken();
 
         // CreatedUtc
         builder.Property(e => e.CreatedUtc)

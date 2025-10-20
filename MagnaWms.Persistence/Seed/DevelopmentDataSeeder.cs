@@ -76,7 +76,7 @@ public sealed class DevelopmentDataSeeder : IHostedService
         // Get existing codes to avoid duplicates
         HashSet<string> existingCodes = await db.Locations
             .AsNoTracking()
-            .Where(l => l.WarehouseID == warehouse.Id)
+            .Where(l => l.WarehouseId == warehouse.Id)
             .Select(l => l.Code)
             .ToHashSetAsync(ct);
 

@@ -9,6 +9,8 @@ public sealed class UnitOfMeasureConfiguration : AggregateRootConfigurationBase<
 {
     public override void Configure(EntityTypeBuilder<UnitOfMeasure> builder)
     {
+        base.Configure(builder);
+
         builder.ToTable("UnitOfMeasure");
 
         builder.HasKey(x => x.Id);

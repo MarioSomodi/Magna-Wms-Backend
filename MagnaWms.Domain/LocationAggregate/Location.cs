@@ -23,7 +23,7 @@ public sealed class Location : AggregateRoot
         IsActive = true;
     }
 
-    public long WarehouseID { get; private set; }
+    public long WarehouseId { get; private set; }
 
     /// <summary>
     /// Unique code within a warehouse identifying the storage address.
@@ -81,7 +81,7 @@ public sealed class Location : AggregateRoot
             throw new DomainException("Location must belong to a valid warehouse.");
         }
 
-        WarehouseID = id;
+        WarehouseId = id;
     }
 
     private void SetCode(string code)

@@ -21,7 +21,7 @@ public sealed class LocationConfiguration : AggregateRootConfigurationBase<Locat
             .IsRequired()
             .HasMaxLength(64);
 
-        builder.HasIndex(x => new { x.WarehouseID, x.Code })
+        builder.HasIndex(x => new { x.WarehouseId, x.Code })
             .IsUnique();
 
         builder.Property(x => x.Type)
@@ -34,7 +34,7 @@ public sealed class LocationConfiguration : AggregateRootConfigurationBase<Locat
 
         builder.HasOne(l => l.Warehouse)
             .WithMany()
-            .HasForeignKey(l => l.WarehouseID)
+            .HasForeignKey(l => l.WarehouseId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
