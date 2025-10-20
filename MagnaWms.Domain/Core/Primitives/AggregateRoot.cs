@@ -1,6 +1,6 @@
 ﻿namespace MagnaWms.Domain.Core.Primitives;
 
-public abstract class AggregateRoot : Entity
+public abstract class AggregateRoot : Entity, IAuditableEntity
 {
     /// <summary>
     /// Concurrency token (ROWVERSION). 
@@ -11,11 +11,21 @@ public abstract class AggregateRoot : Entity
     /// <summary>
     /// UTC timestamp when the record was created.
     /// </summary>
-    public DateTime CreatedUtc { get; protected set; } = DateTime.UtcNow;
+    public DateTime CreatedUtc { get; protected set; }
     /// <summary>
     /// UTC timestamp when the record was last updated.
     /// </summary>
-    public DateTime UpdatedUtc { get; protected set; } = DateTime.UtcNow;
+    public DateTime UpdatedUtc { get; protected set; }
 
-    public void Touch() => UpdatedUtc = DateTime.UtcNow;
+    DateTime IAuditableEntity.CreatedUtc
+    {
+        get => CreatedUtc;
+        set => CreatedUtc = value;
+    }
+
+    DateTime IAuditableEntity.UpdatedUtc
+    {
+        get => UpdatedUtc;
+        set => UpdatedUtc = value;
+    }
 }

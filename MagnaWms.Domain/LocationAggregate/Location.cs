@@ -21,8 +21,6 @@ public sealed class Location : AggregateRoot
         SetType(type);
         SetCapacity(maxQty);
         IsActive = true;
-        CreatedUtc = DateTime.UtcNow;
-        UpdatedUtc = DateTime.UtcNow;
     }
 
     public long WarehouseID { get; private set; }
@@ -52,11 +50,7 @@ public sealed class Location : AggregateRoot
     public Warehouse Warehouse { get; private set; } = default!;
 
     #region Business rules
-    public void ChangeCapacity(int? maxQty)
-    {
-        SetCapacity(maxQty);
-        Touch();
-    }
+    public void ChangeCapacity(int? maxQty) => SetCapacity(maxQty);
 
     public void Deactivate()
     {
@@ -66,7 +60,6 @@ public sealed class Location : AggregateRoot
         }
 
         IsActive = false;
-        Touch();
     }
 
     public void Reactivate()
@@ -77,7 +70,6 @@ public sealed class Location : AggregateRoot
         }
 
         IsActive = true;
-        Touch();
     }
     #endregion
 

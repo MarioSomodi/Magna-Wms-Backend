@@ -27,8 +27,6 @@ public sealed class Item : AggregateRoot
         UpdateAttributes(standardCost, leadTimeDays, reorderPoint);
 
         IsActive = true;
-        CreatedUtc = DateTime.UtcNow;
-        UpdatedUtc = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -76,7 +74,6 @@ public sealed class Item : AggregateRoot
     {
         SetName(name);
         UpdateAttributes(cost, leadTimeDays, reorderPoint);
-        Touch();
     }
 
     public void Deactivate()
@@ -87,7 +84,6 @@ public sealed class Item : AggregateRoot
         }
 
         IsActive = false;
-        Touch();
     }
 
     public void Reactivate()
@@ -98,7 +94,6 @@ public sealed class Item : AggregateRoot
         }
 
         IsActive = true;
-        Touch();
     }
     #endregion
     #region Private setters

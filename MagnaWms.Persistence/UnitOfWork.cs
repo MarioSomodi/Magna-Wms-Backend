@@ -20,6 +20,7 @@ public sealed class UnitOfWork(AppDbContext dbContext) : IUnitOfWork, IAsyncDisp
     /// <inheritdoc />
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
+        ApplyAuditTimestamps();
         return await _dbContext.SaveChangesAsync(cancellationToken);
     }
     /// <inheritdoc />
@@ -42,7 +43,7 @@ public sealed class UnitOfWork(AppDbContext dbContext) : IUnitOfWork, IAsyncDisp
         }
 
         try
-{
+        {
             await _dbContext.SaveChangesAsync(cancellationToken);
             await _currentTransaction.CommitAsync(cancellationToken);
         }
@@ -89,4 +90,26 @@ public sealed class UnitOfWork(AppDbContext dbContext) : IUnitOfWork, IAsyncDisp
 
         await _dbContext.DisposeAsync();
     }
+    private void ApplyAuditTimestamps()
+    {
+        IEnumerable<EntityEntry<IAuditableEntity>> entries = _dbContext.ChangeTracker
+            .Entries<IAuditableEntity>()
+            .Where(e => e.State is EntityState.Added or EntityState.Modified);
+
+        DateTime utcNow = DateTime.UtcNow;
+
+        foreach (EntityEntry<IAuditableEntity> entry in entries)
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedUtc = utcNow;
+                entry.Entity.UpdatedUtc = utcNow;
+            }
+            else if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.UpdatedUtc = utcNow;
+            }
+        }
+    }
+
 }

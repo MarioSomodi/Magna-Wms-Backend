@@ -1,6 +1,5 @@
 ﻿using MagnaWms.Domain.Core.Exceptions;
 using MagnaWms.Domain.Core.Primitives;
-using MagnaWms.Domain.LocationAggregate;
 
 namespace MagnaWms.Domain.WarehouseAggregate;
 
@@ -20,8 +19,6 @@ public sealed class Warehouse : AggregateRoot
         SetTimeZone(timeZone);
 
         IsActive = true;
-        CreatedUtc = DateTime.UtcNow;
-        UpdatedUtc = DateTime.UtcNow;
     }
     /// <summary>
     /// Unique warehouse code (e.g., "ZAG01"). 
@@ -45,17 +42,9 @@ public sealed class Warehouse : AggregateRoot
     public bool IsActive { get; private set; } = true;
 
     #region Business rules
-    public void Rename(string newName)
-    {
-        SetName(newName);
-        Touch();
-    }
+    public void Rename(string newName) => SetName(newName);
 
-    public void ChangeTimeZone(string newTimeZone)
-    {
-        SetTimeZone(newTimeZone);
-        Touch();
-    }
+    public void ChangeTimeZone(string newTimeZone) => SetTimeZone(newTimeZone);
 
     public void Deactivate()
     {
@@ -65,7 +54,6 @@ public sealed class Warehouse : AggregateRoot
         }
 
         IsActive = false;
-        Touch();
     }
 
     public void Reactivate()
@@ -76,7 +64,6 @@ public sealed class Warehouse : AggregateRoot
         }
 
         IsActive = true;
-        Touch();
     }
     #endregion
 
