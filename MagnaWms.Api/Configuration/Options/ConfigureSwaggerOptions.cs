@@ -15,6 +15,17 @@ public sealed class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOption
 
     public void Configure(SwaggerGenOptions options)
     {
+        // Group endpoints by controller
+        options.TagActionsBy(api =>
+            new[] { api.ActionDescriptor.RouteValues["controller"] ?? "Misc" });
+
+        // Sort controllers alphabetically, then sort endpoints by route path
+        options.OrderActionsBy(apiDesc => {
+            string controller = apiDesc.ActionDescriptor.RouteValues["controller"] ?? string.Empty;
+            string relativePath = apiDesc.RelativePath ?? string.Empty;
+            return $"{controller}_{relativePath}";
+        });
+
         foreach (ApiVersionDescription description in _provider.ApiVersionDescriptions)
         {
             var info = new OpenApiInfo
@@ -39,7 +50,8 @@ public sealed class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOption
             {
                 info.Description += "⚠️ This API version is deprecated.";
             }
-            options.TagActionsBy(api => new[] { api.GroupName ?? api.ActionDescriptor.RouteValues["controller"] });
+
+            // Only include actions belonging to the current API version
             options.DocInclusionPredicate((version, desc) =>
             {
                 IEnumerable<ApiVersionAttribute> values = desc.ActionDescriptor.EndpointMetadata.OfType<ApiVersionAttribute>();
