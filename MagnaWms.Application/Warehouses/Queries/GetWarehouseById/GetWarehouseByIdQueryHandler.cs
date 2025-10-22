@@ -4,6 +4,7 @@ using MagnaWms.Application.Warehouses.Repository;
 using MagnaWms.Contracts;
 using MagnaWms.Contracts.Errors;
 using MagnaWms.Domain.WarehouseAggregate;
+using MapsterMapper;
 using MediatR;
 
 namespace MagnaWms.Application.Warehouses.Queries.GetWarehouseById;
@@ -12,8 +13,13 @@ public sealed class GetWarehouseByIdQueryHandler
     : IRequestHandler<GetWarehouseByIdQuery, Result<WarehouseDto>>
 {
     private readonly IWarehouseRepository _warehouseRepository;
+    private readonly IMapper _mapper;
 
-    public GetWarehouseByIdQueryHandler(IWarehouseRepository warehouseRepository) => _warehouseRepository = warehouseRepository;
+    public GetWarehouseByIdQueryHandler(IWarehouseRepository warehouseRepository, IMapper mapper)
+    {
+        _warehouseRepository = warehouseRepository;
+        _mapper = mapper;
+    }
 
     public async Task<Result<WarehouseDto>> Handle(
         GetWarehouseByIdQuery request,
@@ -27,12 +33,7 @@ public sealed class GetWarehouseByIdQueryHandler
                 new Error(ErrorCode.NotFound, $"Warehouse with ID {request.WarehouseId} was not found."));
         }
 
-        var dto = new WarehouseDto(
-            warehouse.Id,
-            warehouse.Code,
-            warehouse.Name,
-            warehouse.TimeZone,
-            warehouse.IsActive);
+        var dto = _mapper.Map<WarehouseDto>(warehouse);
 
         return Result<WarehouseDto>.Success(dto);
     }

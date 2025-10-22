@@ -3,6 +3,7 @@ using Hellang.Middleware.ProblemDetails;
 using MagnaWms.Api.Configuration;
 using MagnaWms.Api.Middleware;
 using MagnaWms.Application.Core;
+using MagnaWms.Application.Core.Mapping;
 
 namespace MagnaWms.Api;
 
@@ -25,7 +26,8 @@ public static class Program
             .AddSwaggerDocumentation()
             .AddProblemDetailsSupport(builder.Environment)
             .AddOpenTelemetryStubs(serviceName: "MagnaWms.Api")
-            .AddPersistence(builder.Configuration);
+            .AddPersistence(builder.Configuration)
+            .AddMapping();
 
         WebApplication app = builder.Build();
 
