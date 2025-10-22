@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MagnaWms.Application.Core.Errors;
+using MagnaWms.Contracts.Errors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -10,10 +12,15 @@ namespace MagnaWms.Api.Behaviors;
 public sealed class MagnaProblemDetailsFactory : ProblemDetailsFactory
 {
     private const string TypeBase = "https://magna-wms/errors/";
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public MagnaProblemDetailsFactory(IOptions<ProblemDetailsOptions> options, ILogger<ProblemDetailsFactory> logger, IHostEnvironment environment) : base(options, logger, environment)
-    {
-    }
+    public MagnaProblemDetailsFactory(
+        IOptions<ProblemDetailsOptions> options,
+        ILogger<ProblemDetailsFactory> logger,
+        IHostEnvironment environment,
+        IHttpContextAccessor httpContextAccessor) 
+        : base(options, logger, environment) 
+    => _httpContextAccessor = httpContextAccessor;
 
     public override ProblemDetails CreateProblemDetails(
         HttpContext context,
@@ -64,24 +71,66 @@ public sealed class MagnaProblemDetailsFactory : ProblemDetailsFactory
         return problem;
     }
 
+    public ProblemDetails CreateFromError(Error error)
+    {
+        HttpContext? context = _httpContextAccessor.HttpContext;
+        (int status, string title) = MapStatus(error.Code);
+
+        ProblemDetails problem = CreateProblemDetails(
+            context ?? new DefaultHttpContext(),
+            statusCode: status,
+            title: title,
+            type: $"{TypeBase}{SlugFor(status)}",
+            detail: error.Description
+        );
+
+        problem.Extensions["code"] = (int)error.Code;
+
+        if (error.Code == ErrorCode.ValidationFailed &&
+            context != null &&
+            context.Items.TryGetValue("validationErrors", out object? errors) &&
+            errors is IDictionary<string, string[]> validationDict)
+        {
+            problem.Extensions["errors"] = validationDict;
+        }
+
+        return problem;
+    }
+
+    private static (int status, string title) MapStatus(ErrorCode code) => code switch
+    {
+        ErrorCode.ValidationFailed => (400, "Validation Failed"),
+        ErrorCode.BadRequest => (400, "Bad Request"),
+        ErrorCode.Conflict => (409, "Conflict"),
+        ErrorCode.Forbidden => (403, "Forbidden"),
+        ErrorCode.Unauthorized => (401, "Unauthorized"),
+        ErrorCode.NotFound => (404, "Resource Not Found"),
+        ErrorCode.ConcurrencyConflict => (409, "Concurrency Conflict"),
+        ErrorCode.DatabaseError => (500, "Database Error"),
+        ErrorCode.DatabaseUnavailable => (503, "Database Unavailable"),
+        ErrorCode.InternalError => (500, "Internal Server Error"),
+        _ => (500, "Unknown Error")
+    };
+
     private static void Enrich(HttpContext context, ProblemDetails problem)
     {
         // Always include traceId and a correlationId
         problem.Extensions["traceId"] = context.TraceIdentifier;
 
-        if (!context.Request.Headers.TryGetValue("X-Correlation-ID", out StringValues cid) || string.IsNullOrWhiteSpace(cid))
-        {
-            cid = Guid.NewGuid().ToString();
-        }
-        problem.Extensions["correlationId"] = cid.ToString();
+        string? cid = null;
 
-        // Optional: bubble up a domain/application error code if a handler set one
-        if (context.Items.TryGetValue("errorCode", out object? code) && code is string s && !string.IsNullOrWhiteSpace(s))
+        // Prefer item stored by CorrelationIdMiddleware
+        if (context.Items.TryGetValue("X-Correlation-ID", out object? itemCid) && itemCid is string itemVal)
         {
-            problem.Extensions["errorCode"] = s;
-            // Make the RFC7807 type stable & shareable:
-            problem.Type = $"{TypeBase}{s}";
+            cid = itemVal;
         }
+        else if (context.Request.Headers.TryGetValue("X-Correlation-ID", out StringValues headerCid) && !StringValues.IsNullOrEmpty(headerCid))
+        {
+            cid = headerCid.ToString();
+        }
+
+        cid ??= Guid.NewGuid().ToString();
+        problem.Extensions["correlationId"] = cid.ToString();
     }
 
     private static string DefaultTitleFor(int status) => status switch
@@ -94,7 +143,7 @@ public sealed class MagnaProblemDetailsFactory : ProblemDetailsFactory
         409 => "Conflict",
         422 => "Unprocessable Entity",
         500 => "Internal Server Error",
-        _ => "An error occurred"
+        _ => "Internal Server Error"
     };
 
     private static string SlugFor(int status) => status switch

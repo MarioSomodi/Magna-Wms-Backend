@@ -17,7 +17,7 @@ public static class Program
             .AddControllers();
         
         builder.Services
-            .AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<AssemblyMarker>())
+            .AddHttpContextAccessor()
             .AddApiVersioningWithExplorer()
             .AddSwaggerDocumentation()
             .AddProblemDetailsSupport(builder.Environment)

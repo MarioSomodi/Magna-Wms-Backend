@@ -25,6 +25,7 @@ public static class ProblemDetailsSetup
 
         // Replace the default factory
         services.AddSingleton<ProblemDetailsFactory, MagnaProblemDetailsFactory>();
+        services.AddSingleton<MagnaProblemDetailsFactory>();
 
         return services;
     }

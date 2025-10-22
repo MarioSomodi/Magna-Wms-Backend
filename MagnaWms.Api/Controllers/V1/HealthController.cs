@@ -1,4 +1,7 @@
 ﻿using Asp.Versioning;
+using MagnaWms.Api.Behaviors;
+using MagnaWms.Api.Extensions;
+using MagnaWms.Application.Core.Errors;
 using MagnaWms.Contracts.Errors;
 using MagnaWms.Persistence.Context;
 using Microsoft.AspNetCore.Mvc;
@@ -12,39 +15,33 @@ namespace MagnaWms.Api.Controllers.V1;
 public sealed class HealthController : ControllerBase
 {
     private readonly AppDbContext _dbContext;
+    private readonly MagnaProblemDetailsFactory _magnaProblemDetailsFactory;
 
-    public HealthController(AppDbContext dbContext) => _dbContext = dbContext;
+    public HealthController(AppDbContext dbContext, MagnaProblemDetailsFactory magnaProblemDetailsFactory)
+    {
+        _dbContext = dbContext;
+        _magnaProblemDetailsFactory = magnaProblemDetailsFactory;
+    }
 
     /// <summary>
     /// Returns a simple liveness indicator for the Magna WMS API.
     /// </summary>
-    /// <remarks>
-    /// This endpoint confirms the application is up and responding.
-    /// Intended for human checks or monitoring tools.
-    /// </remarks>
-    /// <response code="200">The API is responding correctly.</response>
     [HttpGet]
-    [SwaggerOperation(
-        Summary = "Liveness check",
-        Description = "Returns basic operational status of the Magna WMS API.")]
+    [SwaggerOperation(Summary = "Liveness check", Description = "Returns basic operational status of the Magna WMS API.")]
     [SwaggerResponse(StatusCodes.Status200OK, "The API is healthy.", typeof(object))]
     public IActionResult Get() => Ok(new { status = "ok" });
 
     /// <summary>
     /// Returns a static "pong" response to verify request/response pipeline integrity.
     /// </summary>
-    /// <remarks>
-    /// Use this to test connectivity, latency, or reverse proxy behavior.
-    /// Often used by frontend health calls or monitoring scripts.
-    /// </remarks>
-    /// <response code="200">The API responded with 'pong'.</response>
     [HttpGet("ping")]
-    [SwaggerOperation(
-        Summary = "Ping test",
-        Description = "Simple connectivity test endpoint. Returns 'pong' if reachable.")]
+    [SwaggerOperation(Summary = "Ping test", Description = "Simple connectivity test endpoint. Returns 'pong' if reachable.")]
     [SwaggerResponse(StatusCodes.Status200OK, "API connectivity confirmed.", typeof(string))]
     public IActionResult Ping() => Ok("pong");
 
+    /// <summary>
+    /// Checks database connectivity and API readiness.
+    /// </summary>
     [HttpGet("ready")]
     [SwaggerOperation(Summary = "Readiness check", Description = "Verifies DB connectivity and overall API readiness.")]
     [SwaggerResponse(StatusCodes.Status200OK, "Application and database are ready.")]
@@ -58,18 +55,13 @@ public sealed class HealthController : ControllerBase
                 return Ok(new { status = "ready" });
             }
 
-            return this.Problem(
-                ErrorCode.DatabaseUnavailable,
-                StatusCodes.Status503ServiceUnavailable,
-                "The API could not connect to the database. Please check database health.");
+            var error = new Error(ErrorCode.DatabaseUnavailable, "The API could not connect to the database.");
+            return this.ProblemResult(_magnaProblemDetailsFactory, error);
         }
         catch (Exception ex)
         {
-            return this.Problem(
-                ErrorCode.Unknown,
-                StatusCodes.Status503ServiceUnavailable,
-                detail: ex.Message,
-                title: "Readiness check failed");
+            var error = new Error(ErrorCode.InternalError, ex.Message);
+            return this.ProblemResult(_magnaProblemDetailsFactory, error);
         }
     }
 }

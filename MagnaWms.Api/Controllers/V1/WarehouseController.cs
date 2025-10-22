@@ -1,8 +1,12 @@
-﻿using MagnaWms.Contracts;
-using MagnaWms.Application.Warehouses.Queries;
+﻿using Asp.Versioning;
+using MagnaWms.Api.Behaviors;
+using MagnaWms.Api.Extensions;
+using MagnaWms.Application.Core.Results;
+using MagnaWms.Application.Warehouses.Queries.GetAllWarehouses;
+using MagnaWms.Application.Warehouses.Queries.GetWarehouseById;
+using MagnaWms.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Asp.Versioning;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace MagnaWms.Api.Controllers.V1;
@@ -13,40 +17,58 @@ namespace MagnaWms.Api.Controllers.V1;
 public sealed class WarehouseController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly MagnaProblemDetailsFactory _magnaProblemDetailsFactory;
 
-    public WarehouseController(IMediator mediator) => _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+    public WarehouseController(IMediator mediator, MagnaProblemDetailsFactory magnaProblemDetailsFactory) 
+    {
+        _mediator = mediator;
+        _magnaProblemDetailsFactory = magnaProblemDetailsFactory;
+    }
 
     /// <summary>
-    /// Retrieves all warehouses currently registered in the Magna WMS system.
+    /// Retrieves all warehouses.
     /// </summary>
-    /// <remarks>
-    /// This endpoint returns a list of all active and inactive warehouses configured in the system.
-    /// Each warehouse record contains:
-    /// 
-    /// * <b>WarehouseID</b> — Unique identifier  
-    /// * <b>Code</b> — Internal warehouse code (e.g., `ZAG01`)  
-    /// * <b>Name</b> — Display name of the warehouse  
-    /// * <b>TimeZone</b> — Time zone associated with the warehouse  
-    /// * <b>IsActive</b> — Indicates if the warehouse is active
-    /// 
-    /// Example usage:
-    /// 
-    ///     GET /api/v1/Warehouse
-    /// 
-    /// </remarks>
-    /// <response code="200">Returns a list of all warehouses.</response>
-    /// <response code="204">No warehouses found in the system.</response>
-    /// <response code="500">An unexpected error occurred while retrieving data.</response>
+    /// <response code="200">Warehouses retrieved successfully.</response>
+    /// <response code="204">No warehouses found.</response>
+    /// <response code="500">Unexpected server error.</response>
     [HttpGet]
     [SwaggerOperation(
-        Summary = "Retrieve all warehouses",
-        Description = "Returns a list of all warehouses (active and inactive) registered in the Magna WMS system.")]
-    [SwaggerResponse(StatusCodes.Status200OK, "A list of warehouses was successfully retrieved.", typeof(IReadOnlyList<WarehouseDto>))]
-    [SwaggerResponse(StatusCodes.Status204NoContent, "No warehouses were found.")]
-    [SwaggerResponse(StatusCodes.Status500InternalServerError, "An internal server error occurred.")]
+        Summary = "Get all warehouses",
+        Description = "Returns all warehouses configured in the Magna WMS system.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "List of warehouses.", typeof(IReadOnlyList<WarehouseDto>))]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "No warehouses available.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
     public async Task<ActionResult<IReadOnlyList<WarehouseDto>>> GetAllAsync(CancellationToken cancellationToken)
     {
-        IReadOnlyList<WarehouseDto> result = await _mediator.Send(new GetAllWarehousesQuery(), cancellationToken);
-        return Ok(result);
+        Result<IReadOnlyList<WarehouseDto>> result = await _mediator.Send(new GetAllWarehousesQuery(), cancellationToken);
+
+        return result.Match(
+            Ok,
+            error => this.ProblemResult(_magnaProblemDetailsFactory, error)
+        );
     }
+
+    /// <summary>
+    /// Retrieves a warehouse by its ID.
+    /// </summary>
+    /// <response code="200">Warehouse found.</response>
+    /// <response code="404">Warehouse not found.</response>
+    /// <response code="500">Unexpected server error.</response>
+    [HttpGet("{id:long}")]
+    [SwaggerOperation(
+        Summary = "Get warehouse by ID",
+        Description = "Returns a specific warehouse by its unique identifier.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Warehouse found.", typeof(WarehouseDto))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Warehouse not found.")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
+    public async Task<ActionResult<WarehouseDto>> GetByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        Result<WarehouseDto> result = await _mediator.Send(new GetWarehouseByIdQuery(id), cancellationToken);
+
+        return result.Match(
+            Ok,
+            error => this.ProblemResult(_magnaProblemDetailsFactory, error)
+        );
+    }
+
 }
