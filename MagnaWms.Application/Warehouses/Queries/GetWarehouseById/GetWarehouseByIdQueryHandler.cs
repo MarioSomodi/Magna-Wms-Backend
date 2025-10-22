@@ -33,7 +33,7 @@ public sealed class GetWarehouseByIdQueryHandler
                 new Error(ErrorCode.NotFound, $"Warehouse with ID {request.WarehouseId} was not found."));
         }
 
-        var dto = _mapper.Map<WarehouseDto>(warehouse);
+        WarehouseDto dto = _mapper.Map<WarehouseDto>(warehouse);
 
         return Result<WarehouseDto>.Success(dto);
     }

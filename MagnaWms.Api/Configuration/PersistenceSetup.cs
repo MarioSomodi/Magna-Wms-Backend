@@ -1,7 +1,7 @@
 ﻿using MagnaWms.Application.Core.Abstractions;
+using MagnaWms.Application.Items.Repository;
 using MagnaWms.Application.Locations.Repository;
 using MagnaWms.Application.UnitOfMeasures.Repository;
-using MagnaWms.Application.Warehouses.Mapping.Repository;
 using MagnaWms.Application.Warehouses.Repository;
 using MagnaWms.Persistence;
 using MagnaWms.Persistence.Context;

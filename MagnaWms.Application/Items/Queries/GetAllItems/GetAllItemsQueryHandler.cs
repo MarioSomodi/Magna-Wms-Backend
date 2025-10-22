@@ -1,6 +1,6 @@
 ﻿using MagnaWms.Application.Core.Errors;
 using MagnaWms.Application.Core.Results;
-using MagnaWms.Application.Warehouses.Mapping.Repository;
+using MagnaWms.Application.Items.Repository;
 using MagnaWms.Contracts;
 using MagnaWms.Contracts.Errors;
 using MagnaWms.Domain.ItemAggregate;
