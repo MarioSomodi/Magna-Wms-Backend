@@ -1,3 +1,4 @@
+using FluentValidation;
 using Hellang.Middleware.ProblemDetails;
 using MagnaWms.Api.Configuration;
 using MagnaWms.Api.Middleware;
@@ -18,6 +19,8 @@ public static class Program
         
         builder.Services
             .AddHttpContextAccessor()
+            .AddValidatorsFromAssemblyContaining<AssemblyMarker>()
+            .AddMediatRAndBehaviors()
             .AddApiVersioningWithExplorer()
             .AddSwaggerDocumentation()
             .AddProblemDetailsSupport(builder.Environment)
