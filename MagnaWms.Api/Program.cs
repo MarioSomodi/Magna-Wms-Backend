@@ -4,6 +4,7 @@ using MagnaWms.Api.Configuration;
 using MagnaWms.Api.Middleware;
 using MagnaWms.Application.Core;
 using MagnaWms.Application.Core.Mapping;
+using MagnaWms.Infrastructure;
 
 namespace MagnaWms.Api;
 
@@ -28,7 +29,8 @@ public static class Program
             .AddProblemDetailsSupport(builder.Environment)
             .AddOpenTelemetryStubs(serviceName: "MagnaWms.Api")
             .AddPersistence(builder.Configuration)
-            .AddMapping();
+            .AddMapping()
+            .AddInfrastructure(builder.Configuration);
 
         WebApplication app = builder.Build();
         app.UseCorsSupport();
@@ -38,6 +40,7 @@ public static class Program
         app.UseProblemDetails();
         app.UseSwaggerUIWithVersions();
         app.UseHttpsRedirection();
+        app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
         app.Run();

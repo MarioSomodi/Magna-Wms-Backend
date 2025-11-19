@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using MagnaWms.Api.Behaviors;
-using MagnaWms.Api.Extensions;
 using MagnaWms.Application.Core.Errors;
 using MagnaWms.Contracts.Errors;
 using MagnaWms.Persistence.Context;

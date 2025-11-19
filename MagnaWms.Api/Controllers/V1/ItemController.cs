@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using MagnaWms.Api.Behaviors;
-using MagnaWms.Api.Extensions;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Items.Queries.GetAllItems;
 using MagnaWms.Contracts;

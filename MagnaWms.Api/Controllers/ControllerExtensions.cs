@@ -2,7 +2,7 @@
 using MagnaWms.Application.Core.Errors;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MagnaWms.Api.Extensions;
+namespace MagnaWms.Api.Controllers;
 
 public static class ControllerExtensions
 {

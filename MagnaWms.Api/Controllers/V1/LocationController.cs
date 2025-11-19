@@ -1,8 +1,7 @@
 ﻿using Asp.Versioning;
 using MagnaWms.Api.Behaviors;
-using MagnaWms.Api.Extensions;
 using MagnaWms.Application.Core.Results;
-using MagnaWms.Application.Locations.Queries;
+using MagnaWms.Application.Locations.Queries.GetLocationsByWarehouseId;
 using MagnaWms.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

@@ -2,7 +2,7 @@
 using MagnaWms.Domain.UnitOfMeasureAggregate;
 using Mapster;
 
-namespace MagnaWms.Application.UnitOfMesaures.Mapping;
+namespace MagnaWms.Application.UnitOfMeasures.Mapping;
 
 public sealed class UnitOfMeasuresMappingConfig : IRegister
 {

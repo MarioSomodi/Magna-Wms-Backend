@@ -1,11 +1,11 @@
 ﻿using Asp.Versioning;
 using MagnaWms.Api.Behaviors;
-using MagnaWms.Api.Extensions;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Warehouses.Queries.GetAllWarehouses;
 using MagnaWms.Application.Warehouses.Queries.GetWarehouseById;
 using MagnaWms.Contracts;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -32,6 +32,7 @@ public sealed class WarehouseController : ControllerBase
     /// <response code="204">No warehouses found.</response>
     /// <response code="500">Unexpected server error.</response>
     [HttpGet]
+    [Authorize]
     [SwaggerOperation(
         Summary = "Get all warehouses",
         Description = "Returns all warehouses configured in the Magna WMS system.")]
