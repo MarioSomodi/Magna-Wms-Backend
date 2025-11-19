@@ -19,6 +19,7 @@ public static class Program
             .AddControllers();
         
         builder.Services
+            .AddCorsSupport(builder.Configuration)
             .AddHttpContextAccessor()
             .AddValidatorsFromAssemblyContaining<AssemblyMarker>()
             .AddMediatRAndBehaviors()
@@ -30,7 +31,7 @@ public static class Program
             .AddMapping();
 
         WebApplication app = builder.Build();
-
+        app.UseCorsSupport();
         app.UseCorrelationId();
         // pushes CorrelationId/UserId into LogContext
         app.UseRequestContextLogging();
