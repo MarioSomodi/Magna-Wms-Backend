@@ -1,7 +1,11 @@
 ﻿using Bogus;
+using MagnaWms.Application.Core.Abstractions.Authentication;
+using MagnaWms.Contracts.Authorization;
+using MagnaWms.Domain.Authorization;
 using MagnaWms.Domain.ItemAggregate;
 using MagnaWms.Domain.LocationAggregate;
 using MagnaWms.Domain.UnitOfMeasureAggregate;
+using MagnaWms.Domain.UserAggregate;
 using MagnaWms.Domain.WarehouseAggregate;
 using MagnaWms.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +47,7 @@ public sealed class DevelopmentDataSeeder : IHostedService
         await SeedLocationsAsync(db, cancellationToken);
         await SeedUnitOfMeasuresAsync(db, cancellationToken);
         await SeedItemsAsync(db, cancellationToken);
+        await SeedAuthorizationAsync(db, scope.ServiceProvider, cancellationToken);
 
         _logger.LogInformation("Development data seeding completed.");
     }
@@ -197,6 +202,92 @@ public sealed class DevelopmentDataSeeder : IHostedService
         List<Item> items = faker.Generate(10);
         db.Items.AddRange(items);
         await db.SaveChangesAsync(ct);
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0051:Method is too long", Justification = "Just dev seeding")]
+    private static async Task SeedAuthorizationAsync(AppDbContext db, IServiceProvider sp, CancellationToken cancellationToken)
+    {
+        // Skip if roles exist
+        if (await db.Roles.AnyAsync(cancellationToken))
+        {
+            return;
+        }
+
+        IPasswordHasherService hasher = sp.GetRequiredService<IPasswordHasherService>();
+
+        //
+        // 1️ Create Permissions
+        //
+        Permission[] permissions = new[]
+        {
+        new Permission(Permissions.WarehousesRead, "Read warehouses"),
+        new Permission(Permissions.WarehousesManage, "Manage warehouses"),
+
+        new Permission(Permissions.ItemsRead, "Read items"),
+        new Permission(Permissions.ItemsManage, "Manage items"),
+
+        new Permission(Permissions.LocationsRead, "Read locations"),
+        new Permission(Permissions.LocationsManage, "Manage locations")
+    };
+
+        db.Permissions.AddRange(permissions);
+        await db.SaveChangesAsync(cancellationToken);
+
+        //
+        // 2️ Create Roles
+        //
+        var superAdmin = new Role("SuperAdmin", "Full system access");
+        var operatorRole = new Role("Operator", "Basic read/write access");
+
+        db.Roles.Add(superAdmin);
+        db.Roles.Add(operatorRole);
+        await db.SaveChangesAsync(cancellationToken);
+
+        //
+        // 3️ Assign Permissions to Roles
+        //
+        // SuperAdmin gets all permissions:
+        foreach (Permission p in permissions)
+        {
+            superAdmin.AddPermission(p.Id);
+        }
+
+        // Operator gets ONLY read permissions:
+        operatorRole.AddPermission(permissions.Single(p => string.Equals(p.Key, Permissions.WarehousesRead, StringComparison.OrdinalIgnoreCase)).Id);
+        operatorRole.AddPermission(permissions.Single(p => string.Equals(p.Key, Permissions.ItemsRead, StringComparison.OrdinalIgnoreCase)).Id);
+        operatorRole.AddPermission(permissions.Single(p => string.Equals(p.Key, Permissions.LocationsRead, StringComparison.OrdinalIgnoreCase)).Id);
+
+        db.Roles.Update(superAdmin);
+        db.Roles.Update(operatorRole);
+        await db.SaveChangesAsync(cancellationToken);
+
+        //
+        // 4️ Create Base Users
+        //
+        var adminUser = new User(
+            "superadmin@magnawms.com",
+            hasher.HashPassword("superadmin")
+        );
+
+        var operatorUser = new User(
+            "operator@magnawms.com",
+            hasher.HashPassword("operator")
+        );
+
+        db.Users.Add(adminUser);
+        db.Users.Add(operatorUser);
+        await db.SaveChangesAsync(cancellationToken);
+
+        //
+        // 5️ Assign Users to Roles
+        //
+        var adminUserRole = new UserRole(adminUser.Id, superAdmin.Id);
+        var operatorUserRole = new UserRole(operatorUser.Id, operatorRole.Id);
+
+        db.UserRoles.Add(adminUserRole);
+        db.UserRoles.Add(operatorUserRole);
+
+        await db.SaveChangesAsync(cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

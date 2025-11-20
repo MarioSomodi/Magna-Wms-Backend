@@ -26,4 +26,6 @@ public class BaseRepository<T>(AppDbContext context) : IBaseRepository<T> where 
     public void Update(T entity) => Context.Set<T>().Update(entity);
 
     public void Remove(T entity) => Context.Set<T>().Remove(entity);
+    public async Task<IReadOnlyList<T>> GetByIdsAsync(IEnumerable<long> ids, CancellationToken cancellationToken = default) => await Context.Set<T>().Where(w => ids.Contains(w.Id)).ToListAsync(cancellationToken);
+    public async Task<IReadOnlyList<T>> GetByIdsNoTrackingAsync(IEnumerable<long> ids, CancellationToken cancellationToken = default) => await Context.Set<T>().Where(w => ids.Contains(w.Id)).AsNoTracking().ToListAsync(cancellationToken);
 }

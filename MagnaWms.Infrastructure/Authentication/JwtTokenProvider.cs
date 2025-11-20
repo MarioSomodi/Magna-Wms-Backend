@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using MagnaWms.Application.Core.Abstractions.Authentication;
 using MagnaWms.Application.Core.Options;
+using MagnaWms.Contracts.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -20,7 +21,7 @@ internal sealed class JwtTokenProvider : ITokenProvider
         _jwtOptions = jwtOptions.Value;
     }
 
-    public string CreateAccessToken(long userId, string email)
+    public string CreateAccessToken(long userId, string email, IEnumerable<string> permissions, IEnumerable<string> roles)
     {
         string secretKey = _jwtOptions.Secret
             ?? throw new InvalidOperationException("Jwt:Secret is not configured.");
@@ -34,6 +35,16 @@ internal sealed class JwtTokenProvider : ITokenProvider
             new Claim(JwtRegisteredClaimNames.Email, email),
             new Claim(ClaimTypes.NameIdentifier, userId.ToString(CultureInfo.InvariantCulture))
         ];
+
+        foreach (string perm in permissions)
+        {
+            claims = [.. claims, new Claim("perm", perm)];
+        }
+
+        foreach (string role in roles)
+        {
+            claims = [.. claims, new Claim("role", role)];
+        }
 
         var descriptor = new SecurityTokenDescriptor
         {

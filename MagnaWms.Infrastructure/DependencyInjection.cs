@@ -2,7 +2,11 @@
 using MagnaWms.Application.Core.Abstractions.Authentication;
 using MagnaWms.Application.Core.Options;
 using MagnaWms.Infrastructure.Authentication;
+using MagnaWms.Infrastructure.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -26,10 +30,14 @@ public static class DependencyInjection
         services.AddScoped<IPasswordHasherService, PasswordHasherService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
-        // later: add repositories, email, etc.
+        //Autorization
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
         return services;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "MA0051:Method is too long", Justification = "Needed")]
     private static IServiceCollection AddAuthenticationInternal(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -70,6 +78,38 @@ public static class DependencyInjection
                         }
 
                         return Task.CompletedTask;
+                    },
+                    OnChallenge = async ctx =>
+                    {
+                        ctx.HandleResponse();
+
+                        var problem = new ProblemDetails
+                        {
+                            Status = StatusCodes.Status401Unauthorized,
+                            Title = "Unauthorized",
+                            Detail = "Authentication is required.",
+                            Type = "https://magna-wms/errors/unauthorized",
+                            Instance = ctx.Request.Path
+                        };
+
+                        ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        ctx.Response.ContentType = "application/problem+json";
+                        await ctx.Response.WriteAsJsonAsync(problem, cancellationToken: ctx.HttpContext.RequestAborted);
+                    },
+                    OnForbidden = async ctx =>
+                    {
+                        var problem = new ProblemDetails
+                        {
+                            Status = StatusCodes.Status403Forbidden,
+                            Title = "Forbidden",
+                            Detail = "You do not have permission to access this resource.",
+                            Type = "https://magna-wms/errors/forbidden",
+                            Instance = ctx.Request.Path
+                        };
+
+                        ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        ctx.Response.ContentType = "application/problem+json";
+                        await ctx.Response.WriteAsJsonAsync(problem, cancellationToken: ctx.HttpContext.RequestAborted);
                     }
                 };
             });

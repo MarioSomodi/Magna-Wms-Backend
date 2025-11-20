@@ -1,6 +1,9 @@
-﻿using MagnaWms.Domain.ItemAggregate;
+﻿using MagnaWms.Domain.Authorization;
+using MagnaWms.Domain.ItemAggregate;
 using MagnaWms.Domain.LocationAggregate;
+using MagnaWms.Domain.RefreshTokenAggregate;
 using MagnaWms.Domain.UnitOfMeasureAggregate;
+using MagnaWms.Domain.UserAggregate;
 using MagnaWms.Domain.WarehouseAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -18,6 +21,13 @@ public sealed class AppDbContext : DbContext
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<UnitOfMeasure> UnitOfMeasures => Set<UnitOfMeasure>();
     public DbSet<Item> Items => Set<Item>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<Permission> Permissions => Set<Permission>();
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<User> Users => Set<User>();
+    public DbSet<UserWarehouse> UserWarehouses => Set<UserWarehouse>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

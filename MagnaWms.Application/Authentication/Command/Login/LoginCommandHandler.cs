@@ -59,7 +59,10 @@ public sealed class LoginCommandHandler
                 new Error(ErrorCode.Unauthorized, "Invalid credentials."));
         }
 
-        string jwt = _tokenProvider.CreateAccessToken(user.Id, user.Email);
+        IReadOnlyList<string> permissions = await _userRepository.GetUsersPermissions(user.Id, cancellationToken);
+        IReadOnlyList<string> roles = await _userRepository.GetUsersRoles(user.Id, cancellationToken);
+
+        string jwt = _tokenProvider.CreateAccessToken(user.Id, user.Email, permissions, roles);
 
         string rawRefresh = _refreshTokenService.GenerateRefreshToken();
         string refreshHash = _refreshTokenService.HashToken(rawRefresh);

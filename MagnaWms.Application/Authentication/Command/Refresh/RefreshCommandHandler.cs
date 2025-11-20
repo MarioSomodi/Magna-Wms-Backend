@@ -78,7 +78,10 @@ public sealed class RefreshCommandHandler
         await _refreshTokenRepository.AddAsync(replacement, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        string jwt = _tokenProvider.CreateAccessToken(user.Id, user.Email);
+        IReadOnlyList<string> permissions = await _userRepository.GetUsersPermissions(user.Id, cancellationToken);
+        IReadOnlyList<string> roles = await _userRepository.GetUsersRoles(user.Id, cancellationToken);
+
+        string jwt = _tokenProvider.CreateAccessToken(user.Id, user.Email, permissions, roles);
 
         return Result<RefreshResult>.Success(new RefreshResult(jwt, newRefresh));
     }

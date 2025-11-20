@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using MagnaWms.Application.Core.Abstractions.Authentication;
 using MagnaWms.Application.Core.Errors;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Warehouses.Repository;
@@ -14,17 +14,21 @@ public sealed class GetAllWarehousesQueryHandler
     : IRequestHandler<GetAllWarehousesQuery, Result<IReadOnlyList<WarehouseDto>>>
 {
     private readonly IWarehouseRepository _warehouseRepository;
+    private readonly ICurrentUser _currentUser;
     private readonly IMapper _mapper;
 
-    public GetAllWarehousesQueryHandler(IWarehouseRepository warehouseRepository, IMapper mapper)
+    public GetAllWarehousesQueryHandler(IWarehouseRepository warehouseRepository, IMapper mapper, ICurrentUser currentUser)
     {
         _warehouseRepository = warehouseRepository;
         _mapper = mapper;
+        _currentUser = currentUser;
     }
 
     public async Task<Result<IReadOnlyList<WarehouseDto>>> Handle(GetAllWarehousesQuery request, CancellationToken cancellationToken)
     {
-        IReadOnlyList<Warehouse> warehouses = await _warehouseRepository.GetAllAsync(cancellationToken);
+        IReadOnlyList<Warehouse> warehouses = _currentUser.IsSuperAdmin
+            ? await _warehouseRepository.GetAllAsync(cancellationToken)
+            : await _warehouseRepository.GetByIdsAsync(await _currentUser.GetAllowedWarehouses(), cancellationToken);
 
         if (warehouses.Count == 0)
         {
