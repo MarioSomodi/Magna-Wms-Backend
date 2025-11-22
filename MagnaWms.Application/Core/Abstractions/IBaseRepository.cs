@@ -12,4 +12,5 @@ public interface IBaseRepository<T> where T : AggregateRoot
     Task AddAsync(T entity, CancellationToken cancellationToken = default);
     void Update(T entity);
     void Remove(T entity);
+    void RemoveRange(IEnumerable<T> entities);
 }

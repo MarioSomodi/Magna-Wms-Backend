@@ -28,7 +28,7 @@ public sealed class GetAllWarehousesQueryHandler
     {
         IReadOnlyList<Warehouse> warehouses = _currentUser.IsSuperAdmin
             ? await _warehouseRepository.GetAllAsync(cancellationToken)
-            : await _warehouseRepository.GetByIdsAsync(await _currentUser.GetAllowedWarehouses(), cancellationToken);
+            : await _warehouseRepository.GetByIdsAsync(await _currentUser.GetAllowedWarehouses(cancellationToken), cancellationToken);
 
         if (warehouses.Count == 0)
         {

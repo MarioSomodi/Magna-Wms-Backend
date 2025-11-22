@@ -9,7 +9,7 @@ internal sealed class PermissionAuthorizationHandler
         PermissionRequirement requirement)
     {
         // Admin bypass
-        if (context.User.Claims.Any(c => string.Equals(c.Type, "role", StringComparison.OrdinalIgnoreCase) && string.Equals(c.Value, "SuperAdmin", StringComparison.OrdinalIgnoreCase)))
+        if (context.User.Claims.Any(c => string.Equals(c.Type, "http://schemas.microsoft.com/ws/2008/06/identity/claims/role", StringComparison.OrdinalIgnoreCase) && string.Equals(c.Value, "SuperAdmin", StringComparison.OrdinalIgnoreCase)))
         {
             context.Succeed(requirement);
             return Task.CompletedTask;

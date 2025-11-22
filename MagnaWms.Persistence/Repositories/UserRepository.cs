@@ -1,5 +1,6 @@
 ﻿using MagnaWms.Application.Users.Repository;
 using MagnaWms.Domain.Authorization;
+using MagnaWms.Domain.RefreshTokenAggregate;
 using MagnaWms.Domain.UserAggregate;
 using MagnaWms.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -37,4 +38,63 @@ public sealed class UserRepository : BaseRepository<User>, IUserRepository
             .Where(x => x.UserId == userId)
             .Select(x => x.WarehouseId)
             .ToListAsync(cancellationToken);
+
+    public async Task SetUserRolesAsync(long userId, IReadOnlyList<long> roleIds, CancellationToken cancellationToken)
+    {
+        DbSet<UserRole> set = Context.Set<UserRole>();
+
+        List<UserRole> existing = await set
+            .Where(ur => ur.UserId == userId)
+            .ToListAsync(cancellationToken);
+
+        Context.RemoveRange(existing);
+
+        if (roleIds.Count > 0)
+        {
+            IEnumerable<UserRole> toAdd = roleIds.Select(rid => new UserRole(userId, rid));
+            await set.AddRangeAsync(toAdd, cancellationToken);
+        }
+    }
+
+    public async Task SetUserWarehousesAsync(long userId, IReadOnlyList<long> warehouseIds, CancellationToken cancellationToken)
+    {
+        DbSet<UserWarehouse> set = Context.Set<UserWarehouse>();
+
+        List<UserWarehouse> existing = await set
+            .Where(uw => uw.UserId == userId)
+            .ToListAsync(cancellationToken);
+
+        Context.RemoveRange(existing);
+
+        if (warehouseIds.Count > 0)
+        {
+            IEnumerable<UserWarehouse> toAdd = warehouseIds.Select(wid => new UserWarehouse(userId, wid));
+            await set.AddRangeAsync(toAdd, cancellationToken);
+        }
+    }
+
+    public async Task<bool> IsRoleAssignedToAnyUser(long roleId, CancellationToken cancellationToken) => await Context.Set<UserRole>()
+            .AnyAsync(ur => ur.RoleId == roleId, cancellationToken);
+
+    public async Task RemoveUserRolesAsync(long userId, CancellationToken cancellationToken)
+    {
+        DbSet<UserRole> set = Context.Set<UserRole>();
+        List<UserRole> existing = await set.Where(x => x.UserId == userId).ToListAsync(cancellationToken);
+        Context.RemoveRange(existing);
+    }
+
+    public async Task RemoveUserWarehousesAsync(long userId, CancellationToken cancellationToken)
+    {
+        DbSet<UserWarehouse> set = Context.Set<UserWarehouse>();
+        List<UserWarehouse> existing = await set.Where(x => x.UserId == userId).ToListAsync(cancellationToken);
+        Context.RemoveRange(existing);
+    }
+
+    public async Task RemoveRefreshTokensAsync(long userId, CancellationToken cancellationToken)
+    {
+        DbSet<RefreshToken> set = Context.Set<RefreshToken>();
+        List<RefreshToken> existing = await set.Where(x => x.UserId == userId).ToListAsync(cancellationToken);
+        Context.RemoveRange(existing);
+    }
+
 }

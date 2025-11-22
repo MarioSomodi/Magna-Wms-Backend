@@ -227,7 +227,8 @@ public sealed class DevelopmentDataSeeder : IHostedService
         new Permission(Permissions.ItemsManage, "Manage items"),
 
         new Permission(Permissions.LocationsRead, "Read locations"),
-        new Permission(Permissions.LocationsManage, "Manage locations")
+        new Permission(Permissions.LocationsManage, "Manage locations"),
+        new Permission(Permissions.SecurityManage, "Manage security")
     };
 
         db.Permissions.AddRange(permissions);

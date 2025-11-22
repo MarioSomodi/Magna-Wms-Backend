@@ -1,13 +1,15 @@
-﻿using System.Globalization;
-using Asp.Versioning;
+﻿using Asp.Versioning;
 using MagnaWms.Api.Behaviors;
 using MagnaWms.Application.Authentication.Command.Login;
 using MagnaWms.Application.Authentication.Command.Refresh;
 using MagnaWms.Application.Authentication.Command.Register;
+using MagnaWms.Application.Authentication.Queires.GetCurrentUser;
 using MagnaWms.Application.Core.Options;
 using MagnaWms.Application.Core.Results;
+using MagnaWms.Contracts;
 using MagnaWms.Contracts.Authentication;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
@@ -34,10 +36,13 @@ public sealed class AuthenticationController : ControllerBase
     }
 
     [HttpPost("login")]
-    [SwaggerOperation(Summary = "Authenticate user")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Login successful.")]
-    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Invalid credentials.")]
-    public async Task<IActionResult> Login(LoginRequest request, CancellationToken ct)
+    [SwaggerOperation(
+        Summary = "Authenticate user",
+        Description = "Validates user credentials and issues JWT + refresh tokens inside HttpOnly cookies."
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Login successful.", typeof(LoginResponse))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Invalid credentials.", typeof(ProblemDetails))]
+    public async Task<ActionResult<LoginResponse>> Login(LoginRequest request, CancellationToken ct)
     {
         string ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
         Result<LoginResult> result = await _mediator.Send(new LoginCommand(request.Email, request.Password, ip), ct);
@@ -64,9 +69,9 @@ public sealed class AuthenticationController : ControllerBase
 
     [HttpPost("register")]
     [SwaggerOperation(Summary = "Register new user")]
-    [SwaggerResponse(StatusCodes.Status200OK, "User registered successfully.")]
-    [SwaggerResponse(StatusCodes.Status409Conflict, "Email already exists.")]
-    public async Task<IActionResult> Register(RegisterCommand command, CancellationToken ct)
+    [SwaggerResponse(StatusCodes.Status200OK, "User registered successfully.", typeof(RegisterResponse))]
+    [SwaggerResponse(StatusCodes.Status409Conflict, "Email already exists.", typeof(ProblemDetails))]
+    public async Task<ActionResult<RegisterResponse>> Register(RegisterCommand command, CancellationToken ct)
     {
         Result<RegisterResponse> result = await _mediator.Send(command, ct);
 
@@ -77,6 +82,12 @@ public sealed class AuthenticationController : ControllerBase
     }
 
     [HttpPost("refresh")]
+    [SwaggerOperation(
+        Summary = "Refresh access token",
+        Description = "Uses refresh cookie to generate a new access token and rotate refresh token."
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Tokens refreshed successfully.")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Refresh token invalid or missing.", typeof(ProblemDetails))]
     public async Task<IActionResult> Refresh(CancellationToken ct)
     {
         string? rawRefresh = Request.Cookies["refresh"];
@@ -95,6 +106,8 @@ public sealed class AuthenticationController : ControllerBase
     }
 
     [HttpPost("logout")]
+    [SwaggerOperation(Summary = "Logout user")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Logged out successfully.")]
     public IActionResult Logout()
     {
         Response.Cookies.Delete("auth");
@@ -102,6 +115,23 @@ public sealed class AuthenticationController : ControllerBase
         return Ok();
     }
 
+    [HttpGet("me")]
+    [Authorize]
+    [SwaggerOperation(
+        Summary = "Get current authenticated user",
+        Description = "Returns UserDto containing user ID, email, roles, and allowed warehouse IDs."
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "User information retrieved.", typeof(UserDto))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "User is not authenticated.", typeof(ProblemDetails))]
+    public async Task<ActionResult<UserDto>> Me(CancellationToken ct)
+    {
+        Result<UserDto> result = await _mediator.Send(new GetCurrentUserQuery(), ct);
+
+        return result.Match(
+            Ok,
+            error => this.ProblemResult(_magnaProblemDetailsFactory, error)
+        );
+    }
 
     private CookieOptions getCookieOptions(bool isForRefresh = false) => new CookieOptions
     {

@@ -1,7 +1,9 @@
 ﻿using MagnaWms.Application.Authentication.Repository;
 using MagnaWms.Application.Core.Abstractions;
+using MagnaWms.Application.Core.Abstractions.Authorization;
 using MagnaWms.Application.Items.Repository;
 using MagnaWms.Application.Locations.Repository;
+using MagnaWms.Application.Roles.Repository;
 using MagnaWms.Application.UnitOfMeasures.Repository;
 using MagnaWms.Application.Users.Repository;
 using MagnaWms.Application.Warehouses.Repository;
@@ -36,6 +38,8 @@ public static class PersistenceSetup
                 .AddScoped<ILocationRepository, LocationRepository>()
                 .AddScoped<IUserRepository, UserRepository>()
                 .AddScoped<IRefreshTokenRepository, RefreshTokenRepository>()
+                .AddScoped<IPermissionRepository, PermissionRepository>()
+                .AddScoped<IRoleRepository, RoleRepository>()
                 .AddScoped<IUnitOfMeasureRepository, UnitOfMeasureRepository>();
 
         return services;

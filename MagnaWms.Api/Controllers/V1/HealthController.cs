@@ -43,7 +43,7 @@ public sealed class HealthController : ControllerBase
     /// </summary>
     [HttpGet("ready")]
     [SwaggerOperation(Summary = "Readiness check", Description = "Verifies DB connectivity and overall API readiness.")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Application and database are ready.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Application and database are ready.", typeof(object))]
     [SwaggerResponse(StatusCodes.Status503ServiceUnavailable, "Database unavailable.")]
     public async Task<IActionResult> Ready(CancellationToken cancellationToken)
     {
