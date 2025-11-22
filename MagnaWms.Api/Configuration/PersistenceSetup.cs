@@ -1,8 +1,11 @@
 ﻿using MagnaWms.Application.Authentication.Repository;
 using MagnaWms.Application.Core.Abstractions;
 using MagnaWms.Application.Core.Abstractions.Authorization;
+using MagnaWms.Application.Inventories.Repository;
+using MagnaWms.Application.InventoryLedgers.Repository;
 using MagnaWms.Application.Items.Repository;
 using MagnaWms.Application.Locations.Repository;
+using MagnaWms.Application.Receipts.Repository;
 using MagnaWms.Application.Roles.Repository;
 using MagnaWms.Application.UnitOfMeasures.Repository;
 using MagnaWms.Application.Users.Repository;
@@ -40,6 +43,9 @@ public static class PersistenceSetup
                 .AddScoped<IRefreshTokenRepository, RefreshTokenRepository>()
                 .AddScoped<IPermissionRepository, PermissionRepository>()
                 .AddScoped<IRoleRepository, RoleRepository>()
+                .AddScoped<IInventoryRepository, InventoryRepository>()
+                .AddScoped<IInventoryLedgerRepository, InventoryLedgerRepository>()
+                .AddScoped<IReceiptRepository, ReceiptRepository>()
                 .AddScoped<IUnitOfMeasureRepository, UnitOfMeasureRepository>();
 
         return services;

@@ -4,6 +4,7 @@ using MagnaWms.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MagnaWms.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251122191915_InventoryAndLedger")]
+    partial class InventoryAndLedger
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -413,108 +416,6 @@ namespace MagnaWms.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MagnaWms.Domain.ReceiptAggregate.Receipt", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime?>("ClosedUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("CreatedByUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedUtc")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("SYSUTCDATETIME()");
-
-                    b.Property<DateTime?>("ExpectedArrivalDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ExternalReference")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
-
-                    b.Property<string>("ReceiptNumber")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<long?>("ReceivedByUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedUtc")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("SYSUTCDATETIME()");
-
-                    b.Property<long>("WarehouseId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Receipt", "wms");
-                });
-
-            modelBuilder.Entity("MagnaWms.Domain.ReceiptAggregate.ReceiptLine", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<decimal>("ExpectedQuantity")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<long>("ItemId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ItemName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("ItemSku")
-                        .HasMaxLength(64)
-                        .HasColumnType("nvarchar(64)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
-
-                    b.Property<long>("ReceiptId")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("ReceivedQuantity")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<long?>("ToLocationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("UnitOfMeasure")
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceiptId");
-
-                    b.ToTable("ReceiptLine", "wms");
-                });
-
             modelBuilder.Entity("MagnaWms.Domain.RefreshTokenAggregate.RefreshToken", b =>
                 {
                     b.Property<long>("Id")
@@ -742,15 +643,6 @@ namespace MagnaWms.Persistence.Migrations
                     b.Navigation("Warehouse");
                 });
 
-            modelBuilder.Entity("MagnaWms.Domain.ReceiptAggregate.ReceiptLine", b =>
-                {
-                    b.HasOne("MagnaWms.Domain.ReceiptAggregate.Receipt", null)
-                        .WithMany("Lines")
-                        .HasForeignKey("ReceiptId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("MagnaWms.Domain.RefreshTokenAggregate.RefreshToken", b =>
                 {
                     b.HasOne("MagnaWms.Domain.UserAggregate.User", null)
@@ -763,11 +655,6 @@ namespace MagnaWms.Persistence.Migrations
             modelBuilder.Entity("MagnaWms.Domain.Authorization.Role", b =>
                 {
                     b.Navigation("Permissions");
-                });
-
-            modelBuilder.Entity("MagnaWms.Domain.ReceiptAggregate.Receipt", b =>
-                {
-                    b.Navigation("Lines");
                 });
 #pragma warning restore 612, 618
         }

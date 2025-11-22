@@ -14,4 +14,7 @@ public class LocationRepository : BaseRepository<Location>, ILocationRepository
             .AsNoTracking()
             .Where(l => l.WarehouseId == warehouseId)
             .ToListAsync(cancellationToken);
+    public async Task<bool> ExistsInWarehouse(long locationId, long warehouseId, CancellationToken ct)
+    => await Context.Set<Location>()
+        .AnyAsync(l => l.Id == locationId && l.WarehouseId == warehouseId, ct);
 }

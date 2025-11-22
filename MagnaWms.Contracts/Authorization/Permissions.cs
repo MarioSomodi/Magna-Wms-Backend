@@ -8,4 +8,7 @@ public static class Permissions
     public const string LocationsRead = "Locations.Read";
     public const string LocationsManage = "Locations.Manage";
     public const string SecurityManage = "Security.Manager";
+    public const string InventoryRead = "Inventory.Read";
+    public const string InventoryManage = "Inventory.Manage";
+    public const string InventoryLedgerRead = "Inventory.Ledger.Read";
 }
