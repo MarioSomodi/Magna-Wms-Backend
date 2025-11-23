@@ -36,7 +36,7 @@ public sealed class ShipmentConfiguration : AggregateRootConfigurationBase<Shipm
             .HasColumnType("datetime2")
             .IsRequired();
 
-        builder.HasMany<ShipmentLine>()
+        builder.HasMany(s => s.Lines)
             .WithOne()
             .HasForeignKey(l => l.ShipmentId)
             .OnDelete(DeleteBehavior.Cascade);

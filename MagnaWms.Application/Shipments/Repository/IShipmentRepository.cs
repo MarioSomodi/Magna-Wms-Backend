@@ -10,4 +10,7 @@ public interface IShipmentRepository : IBaseRepository<Shipment>
     Task<IReadOnlyList<Shipment>> GetByWarehouseAsync(
         long warehouseId,
         CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Shipment>> GetByWarehouseWithLinesAsync(
+    long warehouseId,
+    CancellationToken cancellationToken = default);
 }

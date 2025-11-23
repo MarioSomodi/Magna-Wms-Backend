@@ -5,6 +5,7 @@ using MagnaWms.Api.Middleware;
 using MagnaWms.Application.Core;
 using MagnaWms.Application.Core.Mapping;
 using MagnaWms.Infrastructure;
+using MagnaWms.Forecasting;
 
 namespace MagnaWms.Api;
 
@@ -30,7 +31,8 @@ public static class Program
             .AddOpenTelemetryStubs(serviceName: "MagnaWms.Api")
             .AddPersistence(builder.Configuration)
             .AddMapping()
-            .AddInfrastructure(builder.Configuration);
+            .AddInfrastructure(builder.Configuration)
+            .AddForecasting();
 
         WebApplication app = builder.Build();
         app.UseCorsSupport();

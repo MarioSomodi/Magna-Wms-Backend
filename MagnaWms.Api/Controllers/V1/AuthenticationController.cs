@@ -1,8 +1,8 @@
 ﻿using Asp.Versioning;
 using MagnaWms.Api.Behaviors;
-using MagnaWms.Application.Authentication.Command.Login;
-using MagnaWms.Application.Authentication.Command.Refresh;
-using MagnaWms.Application.Authentication.Command.Register;
+using MagnaWms.Application.Authentication.Commands.Login;
+using MagnaWms.Application.Authentication.Commands.Refresh;
+using MagnaWms.Application.Authentication.Commands.Register;
 using MagnaWms.Application.Authentication.Queires.GetCurrentUser;
 using MagnaWms.Application.Core.Options;
 using MagnaWms.Application.Core.Results;

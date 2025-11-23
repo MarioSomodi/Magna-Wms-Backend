@@ -24,4 +24,14 @@ public sealed class ShipmentRepository : BaseRepository<Shipment>, IShipmentRepo
             .Where(s => s.WarehouseId == warehouseId)
             .OrderByDescending(s => s.ShippedUtc)
             .ToListAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<Shipment>> GetByWarehouseWithLinesAsync(
+    long warehouseId,
+    CancellationToken cancellationToken = default) =>
+    await Context.Set<Shipment>()
+        .AsNoTracking()
+        .Include(s => s.Lines)
+        .Where(s => s.WarehouseId == warehouseId)
+        .OrderByDescending(s => s.ShippedUtc)
+        .ToListAsync(cancellationToken);
 }

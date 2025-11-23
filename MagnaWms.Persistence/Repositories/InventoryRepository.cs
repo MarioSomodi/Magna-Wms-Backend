@@ -22,7 +22,10 @@ public sealed class InventoryRepository : BaseRepository<Inventory>, IInventoryR
                   && i.LocationId == locationId
                   && i.ItemId == itemId,
                 cancellationToken);
-
+    public async Task<IReadOnlyList<Inventory>> GetByWarehouseAndItemAsync(long warehouseId, long itemId, CancellationToken cancellationToken = default) => await Context.Set<Inventory>()
+            .AsNoTracking()
+            .Where(i => i.WarehouseId == warehouseId && i.ItemId == itemId)
+            .ToListAsync(cancellationToken);
     public async Task<IReadOnlyList<Inventory>> GetByWarehouseAsync(
         long warehouseId,
         CancellationToken cancellationToken = default)

@@ -1,13 +1,17 @@
 ﻿using MagnaWms.Application.Authentication.Repository;
 using MagnaWms.Application.Core.Abstractions;
 using MagnaWms.Application.Core.Abstractions.Authorization;
+using MagnaWms.Application.Forecasting.Repository;
 using MagnaWms.Application.Inventories.Repository;
 using MagnaWms.Application.InventoryLedgers.Repository;
 using MagnaWms.Application.Items.Repository;
 using MagnaWms.Application.Locations.Repository;
+using MagnaWms.Application.PickTasks.Repository;
 using MagnaWms.Application.Putaway.Repository;
 using MagnaWms.Application.Receipts.Repository;
 using MagnaWms.Application.Roles.Repository;
+using MagnaWms.Application.SalesOrders.Repository;
+using MagnaWms.Application.Shipments.Repository;
 using MagnaWms.Application.UnitOfMeasures.Repository;
 using MagnaWms.Application.Users.Repository;
 using MagnaWms.Application.Warehouses.Repository;
@@ -48,6 +52,10 @@ public static class PersistenceSetup
                 .AddScoped<IInventoryLedgerRepository, InventoryLedgerRepository>()
                 .AddScoped<IReceiptRepository, ReceiptRepository>()
                 .AddScoped<IPutawayTaskRepository, PutawayTaskRepository>()
+                .AddScoped<ISalesOrderRepository, SalesOrderRepository>()
+                .AddScoped<IPickTaskRepository, PickTaskRepository>()
+                .AddScoped<IShipmentRepository, ShipmentRepository>()
+                .AddScoped<IForecastSeriesRepository, ForecastSeriesRepository>()
                 .AddScoped<IUnitOfMeasureRepository, UnitOfMeasureRepository>();
 
         return services;

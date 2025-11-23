@@ -185,6 +185,75 @@ namespace MagnaWms.Persistence.Migrations
                     b.ToTable("UserWarehouse", "wms");
                 });
 
+            modelBuilder.Entity("MagnaWms.Domain.ForecastAggregate.ForecastSeries", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<int>("HorizonDays")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ModelInfo")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<long>("WarehouseId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WarehouseId", "ItemId", "CreatedUtc");
+
+                    b.ToTable("ForecastSeries", "wms");
+                });
+
+            modelBuilder.Entity("MagnaWms.Domain.ForecastAggregate.ForecastSeriesPoint", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("ForecastDateUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("ForecastSeriesId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ForecastSeriesId", "ForecastDateUtc");
+
+                    b.ToTable("ForecastSeriesPoint", "wms");
+                });
+
             modelBuilder.Entity("MagnaWms.Domain.InventoryAggregate.Inventory", b =>
                 {
                     b.Property<long>("Id")
@@ -413,6 +482,83 @@ namespace MagnaWms.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MagnaWms.Domain.PickTaskAggregate.PickTask", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("CompletedByUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("CompletedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("CreatedByUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<long>("SalesOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<long>("WarehouseId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PickTask", "wms");
+                });
+
+            modelBuilder.Entity("MagnaWms.Domain.PickTaskAggregate.PickTaskLine", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LocationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("PickTaskId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("QuantityPicked")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal>("QuantityToPick")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PickTaskId");
+
+                    b.ToTable("PickTaskLine", "wms");
+                });
+
             modelBuilder.Entity("MagnaWms.Domain.PutawayAggregate.PutawayTask", b =>
                 {
                     b.Property<long>("Id")
@@ -632,6 +778,161 @@ namespace MagnaWms.Persistence.Migrations
                     b.ToTable("RefreshToken", "wms");
                 });
 
+            modelBuilder.Entity("MagnaWms.Domain.SalesOrderAggregate.SalesOrder", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("OrderNumber")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<long>("WarehouseId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SalesOrder", "wms");
+                });
+
+            modelBuilder.Entity("MagnaWms.Domain.SalesOrderAggregate.SalesOrderLine", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("QuantityAllocated")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal>("QuantityOrdered")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal>("QuantityPicked")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<long>("SalesOrderId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SalesOrderId");
+
+                    b.ToTable("SalesOrderLine", "wms");
+                });
+
+            modelBuilder.Entity("MagnaWms.Domain.ShipmentAggregate.Shipment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Carrier")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<long>("SalesOrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ShipmentNumber")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<long>("ShippedByUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("ShippedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TrackingNumber")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime>("UpdatedUtc")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<long>("WarehouseId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Shipment", "wms");
+                });
+
+            modelBuilder.Entity("MagnaWms.Domain.ShipmentAggregate.ShipmentLine", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("ItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("QuantityShipped")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<long>("ShipmentId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShipmentId");
+
+                    b.ToTable("ShipmentLine", "wms");
+                });
+
             modelBuilder.Entity("MagnaWms.Domain.UnitOfMeasureAggregate.UnitOfMeasure", b =>
                 {
                     b.Property<long>("Id")
@@ -779,6 +1080,15 @@ namespace MagnaWms.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MagnaWms.Domain.ForecastAggregate.ForecastSeriesPoint", b =>
+                {
+                    b.HasOne("MagnaWms.Domain.ForecastAggregate.ForecastSeries", null)
+                        .WithMany("Points")
+                        .HasForeignKey("ForecastSeriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MagnaWms.Domain.ItemAggregate.Item", b =>
                 {
                     b.HasOne("MagnaWms.Domain.UnitOfMeasureAggregate.UnitOfMeasure", "UnitOfMeasure")
@@ -801,6 +1111,15 @@ namespace MagnaWms.Persistence.Migrations
                     b.Navigation("Warehouse");
                 });
 
+            modelBuilder.Entity("MagnaWms.Domain.PickTaskAggregate.PickTaskLine", b =>
+                {
+                    b.HasOne("MagnaWms.Domain.PickTaskAggregate.PickTask", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("PickTaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MagnaWms.Domain.ReceiptAggregate.ReceiptLine", b =>
                 {
                     b.HasOne("MagnaWms.Domain.ReceiptAggregate.Receipt", null)
@@ -819,12 +1138,50 @@ namespace MagnaWms.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MagnaWms.Domain.SalesOrderAggregate.SalesOrderLine", b =>
+                {
+                    b.HasOne("MagnaWms.Domain.SalesOrderAggregate.SalesOrder", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("SalesOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MagnaWms.Domain.ShipmentAggregate.ShipmentLine", b =>
+                {
+                    b.HasOne("MagnaWms.Domain.ShipmentAggregate.Shipment", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("ShipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MagnaWms.Domain.Authorization.Role", b =>
                 {
                     b.Navigation("Permissions");
                 });
 
+            modelBuilder.Entity("MagnaWms.Domain.ForecastAggregate.ForecastSeries", b =>
+                {
+                    b.Navigation("Points");
+                });
+
+            modelBuilder.Entity("MagnaWms.Domain.PickTaskAggregate.PickTask", b =>
+                {
+                    b.Navigation("Lines");
+                });
+
             modelBuilder.Entity("MagnaWms.Domain.ReceiptAggregate.Receipt", b =>
+                {
+                    b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("MagnaWms.Domain.SalesOrderAggregate.SalesOrder", b =>
+                {
+                    b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("MagnaWms.Domain.ShipmentAggregate.Shipment", b =>
                 {
                     b.Navigation("Lines");
                 });

@@ -14,6 +14,10 @@ public interface IInventoryRepository : IBaseRepository<Inventory>
     Task<IReadOnlyList<Inventory>> GetByWarehouseAsync(
         long warehouseId,
         CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Inventory>> GetByWarehouseAndItemAsync(
+        long warehouseId,
+        long itemId,
+        CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<Inventory>> GetByWarehousesAsync(
         IReadOnlyList<long> warehouseIds,

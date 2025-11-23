@@ -28,9 +28,10 @@ public sealed class PickTaskConfiguration : AggregateRootConfigurationBase<PickT
             .HasColumnType("datetime2")
             .IsRequired(false);
 
-        builder.HasMany<PickTaskLine>()
+        builder.HasMany(p => p.Lines)
             .WithOne()
             .HasForeignKey(l => l.PickTaskId)
             .OnDelete(DeleteBehavior.Cascade);
+
     }
 }
