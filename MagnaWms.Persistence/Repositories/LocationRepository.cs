@@ -9,12 +9,25 @@ public class LocationRepository : BaseRepository<Location>, ILocationRepository
 {
     public LocationRepository(AppDbContext context) : base(context) { }
 
+    public async Task<IReadOnlyList<Location>> GetStageLocationForWarehouse(long warehouseId, CancellationToken cancellationToken = default)
+        => await Context.Set<Location>()
+            .AsNoTracking()
+            .Where(l => l.Type == "STAGE" && l.WarehouseId == warehouseId)
+            .ToListAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<Location>> GetByType(string type, CancellationToken cancellationToken = default)
+        => await Context.Set<Location>()
+            .AsNoTracking()
+            .Where(l => l.Type == type)
+            .ToListAsync(cancellationToken);
+
     public async Task<IReadOnlyList<Location>> GetByWarehouseIdAsync(long warehouseId, CancellationToken cancellationToken = default)
         => await Context.Set<Location>()
             .AsNoTracking()
             .Where(l => l.WarehouseId == warehouseId)
             .ToListAsync(cancellationToken);
+
     public async Task<bool> ExistsInWarehouse(long locationId, long warehouseId, CancellationToken ct)
-    => await Context.Set<Location>()
-        .AnyAsync(l => l.Id == locationId && l.WarehouseId == warehouseId, ct);
-}
+        => await Context.Set<Location>()
+            .AnyAsync(l => l.Id == locationId && l.WarehouseId == warehouseId, ct);
+}   

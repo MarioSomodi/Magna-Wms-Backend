@@ -9,6 +9,7 @@ using MagnaWms.Application.Receipts.Repository;
 using MagnaWms.Contracts;
 using MagnaWms.Contracts.Errors;
 using MagnaWms.Domain.InventoryAggregate;
+using MagnaWms.Domain.LocationAggregate;
 using MagnaWms.Domain.ReceiptAggregate;
 using MapsterMapper;
 using MediatR;
@@ -48,7 +49,6 @@ public sealed class ReceiveReceiptLineCommandHandler
         ReceiveReceiptLineCommand request,
         CancellationToken cancellationToken)
     {
-        // Load receipt with lines
         Receipt? receipt = await _receiptRepository.GetWithLinesAsync(request.ReceiptId, cancellationToken);
 
         if (receipt is null)
@@ -65,22 +65,17 @@ public sealed class ReceiveReceiptLineCommandHandler
                 new Error(ErrorCode.Forbidden, "You cannot receive inventory for this warehouse."));
         }
 
-        bool locationOk = await _locationRepository.ExistsInWarehouse(
-            request.ToLocationId,
-            receipt.WarehouseId,
-            cancellationToken);
+        ReceiptLine? line = receipt.Lines.FirstOrDefault(l => l.Id == request.LineId);
 
-        if (!locationOk)
+        if (line is null)
         {
             return Result<ReceiptDto>.Failure(
-                new Error(ErrorCode.BadRequest, "Invalid location for this warehouse."));
+                new Error(ErrorCode.BadRequest, "Receipt line not found."));
         }
-
-        long userId = _currentUser.UserId!.Value;
 
         try
         {
-            receipt.Receive(userId, request.LineId, request.Quantity);
+            receipt.Receive(_currentUser.UserId!.Value, request.LineId, request.Quantity);
         }
         catch (Exception ex)
         {
@@ -88,11 +83,16 @@ public sealed class ReceiveReceiptLineCommandHandler
                 new Error(ErrorCode.BadRequest, ex.Message));
         }
 
-        ReceiptLine line = receipt.Lines.First(l => l.Id == request.LineId);
+        IReadOnlyList<Location>? staging = await _locationRepository.GetStageLocationForWarehouse(receipt.WarehouseId, cancellationToken);
+        if (staging is null)
+        {
+            return Result<ReceiptDto>.Failure(
+                new Error(ErrorCode.BadRequest, "No staging location exists for this warehouse."));
+        }
 
         Inventory? inv = await _inventoryRepository.GetByKeyAsync(
             receipt.WarehouseId,
-            request.ToLocationId,
+            staging[0].Id,
             line.ItemId,
             cancellationToken);
 
@@ -100,7 +100,7 @@ public sealed class ReceiveReceiptLineCommandHandler
         {
             inv = new Inventory(
                 receipt.WarehouseId,
-                request.ToLocationId,
+                staging[0].Id,
                 line.ItemId,
                 quantityOnHand: 0m);
 
@@ -109,23 +109,22 @@ public sealed class ReceiveReceiptLineCommandHandler
 
         inv.ApplyDelta(request.Quantity);
 
-        var entry = new InventoryLedgerEntry(
-            warehouseId: receipt.WarehouseId,
-            locationId: request.ToLocationId,
-            itemId: line.ItemId,
-            quantityChange: request.Quantity,
-            resultingQuantityOnHand: inv.QuantityOnHand,
-            movementType: "Receiving",
-            referenceType: "Receipt",
-            referenceNumber: receipt.ReceiptNumber
-        );
-
-        await _ledgerRepository.AddAsync(entry, cancellationToken);
+        await _ledgerRepository.AddAsync(
+            new InventoryLedgerEntry(
+                warehouseId: receipt.WarehouseId,
+                locationId: staging[0].Id,
+                itemId: line.ItemId,
+                quantityChange: request.Quantity,
+                resultingQuantityOnHand: inv.QuantityOnHand,
+                movementType: "Receiving",
+                referenceType: "Receipt",
+                referenceNumber: receipt.ReceiptNumber
+            ),
+            cancellationToken);
 
         await _uow.SaveChangesAsync(cancellationToken);
 
         ReceiptDto dto = _mapper.Map<ReceiptDto>(receipt);
-
         return Result<ReceiptDto>.Success(dto);
     }
 }

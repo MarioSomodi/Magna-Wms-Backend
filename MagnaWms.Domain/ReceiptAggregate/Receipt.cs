@@ -27,7 +27,7 @@ public sealed class Receipt : AggregateRoot
         ExpectedArrivalDate = expectedArrivalDate;
         CreatedByUserId = createdByUserId;
 
-        Status = ReceiptStatus.Open;
+        Status = OCStatus.Open;
     }
 
     public long WarehouseId { get; private set; }
@@ -39,12 +39,12 @@ public sealed class Receipt : AggregateRoot
     public long? ReceivedByUserId { get; private set; }
     public DateTime? ClosedUtc { get; private set; }
 
-    public ReceiptStatus Status { get; private set; }
+    public OCStatus Status { get; private set; }
     public IReadOnlyCollection<ReceiptLine> Lines => _lines.AsReadOnly();
 
     public void AddLine(long itemId, decimal expectedQty)
     {
-        if (Status != ReceiptStatus.Open)
+        if (Status != OCStatus.Open)
         {
             throw new DomainException("Cannot add lines to a closed receipt.");
         }
@@ -54,7 +54,7 @@ public sealed class Receipt : AggregateRoot
 
     public void Receive(long userId, long lineId, decimal quantity)
     {
-        if (Status != ReceiptStatus.Open)
+        if (Status != OCStatus.Open)
         {
             throw new DomainException("Receipt is closed.");
         }
@@ -66,7 +66,7 @@ public sealed class Receipt : AggregateRoot
 
         if (_lines.TrueForAll(l => l.IsFullyReceived))
         {
-            Status = ReceiptStatus.Closed;
+            Status = OCStatus.Closed;
             ReceivedByUserId = userId;
             ClosedUtc = DateTime.UtcNow;
         }

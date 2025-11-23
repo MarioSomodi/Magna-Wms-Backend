@@ -5,6 +5,7 @@ using MagnaWms.Application.Inventories.Repository;
 using MagnaWms.Application.InventoryLedgers.Repository;
 using MagnaWms.Application.Items.Repository;
 using MagnaWms.Application.Locations.Repository;
+using MagnaWms.Application.Putaway.Repository;
 using MagnaWms.Application.Receipts.Repository;
 using MagnaWms.Application.Roles.Repository;
 using MagnaWms.Application.UnitOfMeasures.Repository;
@@ -46,6 +47,7 @@ public static class PersistenceSetup
                 .AddScoped<IInventoryRepository, InventoryRepository>()
                 .AddScoped<IInventoryLedgerRepository, InventoryLedgerRepository>()
                 .AddScoped<IReceiptRepository, ReceiptRepository>()
+                .AddScoped<IPutawayTaskRepository, PutawayTaskRepository>()
                 .AddScoped<IUnitOfMeasureRepository, UnitOfMeasureRepository>();
 
         return services;
