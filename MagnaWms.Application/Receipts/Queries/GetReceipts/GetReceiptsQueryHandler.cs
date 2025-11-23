@@ -7,7 +7,7 @@ using MagnaWms.Contracts.Receipts;
 using MapsterMapper;
 using MediatR;
 
-namespace MagnaWms.Application.Receipts.Queries.GetReceiptsQuery;
+namespace MagnaWms.Application.Receipts.Queries.GetReceipts;
 
 public sealed class GetReceiptsQueryHandler
     : IRequestHandler<GetReceiptsQuery, Result<IReadOnlyList<ReceiptDto>>>

@@ -1,7 +1,7 @@
 ﻿using MagnaWms.Application.Core.Abstractions;
 using MagnaWms.Domain.SalesOrderAggregate;
 
-namespace MagnaWms.Application.SalesOrder.Repository;
+namespace MagnaWms.Application.SalesOrders.Repository;
 
 public interface ISalesOrderRepository : IBaseRepository<SalesOrder>
 {

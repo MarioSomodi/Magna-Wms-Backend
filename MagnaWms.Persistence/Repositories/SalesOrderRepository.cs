@@ -1,4 +1,4 @@
-﻿using MagnaWms.Application.SalesOrder.Repository;
+﻿using MagnaWms.Application.SalesOrders.Repository;
 using MagnaWms.Domain.SalesOrderAggregate;
 using MagnaWms.Persistence.Context;
 using Microsoft.EntityFrameworkCore;

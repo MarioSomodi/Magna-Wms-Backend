@@ -8,7 +8,7 @@ using MagnaWms.Domain.ReceiptAggregate;
 using MapsterMapper;
 using MediatR;
 
-namespace MagnaWms.Application.Receipts.Queries.GetReceiptQuery;
+namespace MagnaWms.Application.Receipts.Queries.GetReceipt;
 
 public sealed class GetReceiptQueryHandler
     : IRequestHandler<GetReceiptQuery, Result<ReceiptDto>>

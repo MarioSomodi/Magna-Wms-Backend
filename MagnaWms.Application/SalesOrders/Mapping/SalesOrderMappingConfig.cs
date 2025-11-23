@@ -2,7 +2,7 @@
 using MagnaWms.Domain.SalesOrderAggregate;
 using Mapster;
 
-namespace MagnaWms.Application.SalesOrder.Mapping;
+namespace MagnaWms.Application.SalesOrders.Mapping;
 
 public sealed class SalesOrderMappingConfig : IRegister
 {
