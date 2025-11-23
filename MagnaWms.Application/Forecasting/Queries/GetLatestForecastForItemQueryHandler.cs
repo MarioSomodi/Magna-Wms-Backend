@@ -27,9 +27,9 @@ public sealed class GetLatestForecastForItemQueryHandler
         _mapper = mapper;
     }
 
-    public async Task<Result<ForecastSeriesDto>> Handle(GetLatestForecastForItemQuery request, CancellationToken ct)
+    public async Task<Result<ForecastSeriesDto>> Handle(GetLatestForecastForItemQuery request, CancellationToken cancellationToken)
     {
-        IReadOnlyList<long> allowed = await _currentUser.GetAllowedWarehouses(ct);
+        IReadOnlyList<long> allowed = await _currentUser.GetAllowedWarehouses(cancellationToken);
 
         if (!_currentUser.IsSuperAdmin && !allowed.Contains(request.WarehouseId))
         {
@@ -41,7 +41,7 @@ public sealed class GetLatestForecastForItemQueryHandler
             request.WarehouseId,
             request.ItemId,
             request.HorizonDays,
-            ct);
+            cancellationToken);
 
         if (series is null)
         {

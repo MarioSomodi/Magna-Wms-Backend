@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using MagnaWms.Api.Behaviors;
 using MagnaWms.Application.Core.Results;
+using MagnaWms.Application.Forecasting.Commands.TrainAllItemsForecast;
 using MagnaWms.Application.Forecasting.Commands.TrainItemForecast;
 using MagnaWms.Application.Forecasting.Queries.GetLatestForecastForItem;
 using MagnaWms.Contracts;
@@ -46,6 +47,25 @@ public sealed class ForecastingController : ControllerBase
     {
         Result<ForecastSeriesDto> result =
             await _mediator.Send(new TrainItemForecastCommand(warehouseId, itemId, horizonDays), ct);
+
+        return result.Match(Ok, e => this.ProblemResult(_pdf, e));
+    }
+
+    /// <summary>
+    /// Trains forecasts for all items in a warehouse.
+    /// </summary>
+    [HttpPost("warehouse/{warehouseId:long}/train-all")]
+    [Authorize(Policy = Permissions.WarehousesManage)]
+    [SwaggerOperation(Summary = "Train forecasts for all warehouse items",
+        Description = "Aggregates shipment history for every item in a warehouse and trains SSA forecasts.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Training completed.", typeof(TrainForecastResultDto))]
+    public async Task<ActionResult<TrainForecastResultDto>> TrainAll(
+        long warehouseId,
+        [FromQuery] int horizonDays = 30,
+        CancellationToken ct = default)
+    {
+        Result<TrainForecastResultDto> result =
+            await _mediator.Send(new TrainAllItemsForecastCommand(warehouseId, horizonDays), ct);
 
         return result.Match(Ok, e => this.ProblemResult(_pdf, e));
     }
