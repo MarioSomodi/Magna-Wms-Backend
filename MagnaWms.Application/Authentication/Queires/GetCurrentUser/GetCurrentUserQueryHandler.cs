@@ -1,15 +1,14 @@
-﻿using MagnaWms.Application.Authentication.Queires.GetCurrentUser;
-using MagnaWms.Application.Core.Abstractions.Authentication;
+﻿using MagnaWms.Application.Core.Abstractions.Authentication;
 using MagnaWms.Application.Core.Errors;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Users.Repository;
-using MagnaWms.Contracts;
 using MagnaWms.Contracts.Errors;
 using MapsterMapper;
 using MediatR;
 using MagnaWms.Domain.UserAggregate;
+using MagnaWms.Contracts.Users;
 
-namespace MagnaWms.Application.Authentication.Query.GetCurrentUser;
+namespace MagnaWms.Application.Authentication.Queires.GetCurrentUser;
 
 public sealed class GetCurrentUserQueryHandler
     : IRequestHandler<GetCurrentUserQuery, Result<UserDto>>

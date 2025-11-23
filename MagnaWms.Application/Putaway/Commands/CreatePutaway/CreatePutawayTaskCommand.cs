@@ -1,8 +1,8 @@
 ﻿using MagnaWms.Application.Core.Results;
-using MagnaWms.Contracts;
+using MagnaWms.Contracts.Putaway;
 using MediatR;
 
-namespace MagnaWms.Application.Putaway.Commands.CreatePutawayTask;
+namespace MagnaWms.Application.Putaway.Commands.CreatePutaway;
 
 public sealed record CreatePutawayTaskCommand(
     long ReceiptId,

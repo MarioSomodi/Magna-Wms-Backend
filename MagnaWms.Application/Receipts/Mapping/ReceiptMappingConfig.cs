@@ -1,4 +1,4 @@
-﻿using MagnaWms.Contracts;
+﻿using MagnaWms.Contracts.Receipts;
 using MagnaWms.Domain.ReceiptAggregate;
 using Mapster;
 

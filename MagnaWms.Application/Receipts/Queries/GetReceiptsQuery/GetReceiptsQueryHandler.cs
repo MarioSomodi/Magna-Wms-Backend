@@ -2,12 +2,12 @@
 using MagnaWms.Application.Core.Errors;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Receipts.Repository;
-using MagnaWms.Contracts;
 using MagnaWms.Contracts.Errors;
+using MagnaWms.Contracts.Receipts;
 using MapsterMapper;
 using MediatR;
 
-namespace MagnaWms.Application.Receipts.Queries.GetReceipts;
+namespace MagnaWms.Application.Receipts.Queries.GetReceiptsQuery;
 
 public sealed class GetReceiptsQueryHandler
     : IRequestHandler<GetReceiptsQuery, Result<IReadOnlyList<ReceiptDto>>>

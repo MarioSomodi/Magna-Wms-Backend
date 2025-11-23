@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using MagnaWms.Contracts;
 using MagnaWms.Application.Core.Results;
+using MagnaWms.Contracts.Warehouses;
 
 namespace MagnaWms.Application.Warehouses.Queries.GetAllWarehouses;
 

@@ -1,4 +1,4 @@
-﻿using MagnaWms.Contracts;
+﻿using MagnaWms.Contracts.Users;
 using MagnaWms.Domain.UserAggregate;
 using Mapster;
 

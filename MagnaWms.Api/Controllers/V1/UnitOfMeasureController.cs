@@ -3,7 +3,7 @@ using MagnaWms.Api.Behaviors;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.UnitOfMeasures.Queries.GetAllUnitOfMeasures;
 using MagnaWms.Application.UnitOfMeasures.Queries.GetUnitOfMeasureById;
-using MagnaWms.Contracts;
+using MagnaWms.Contracts.UnitOfMeasures;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

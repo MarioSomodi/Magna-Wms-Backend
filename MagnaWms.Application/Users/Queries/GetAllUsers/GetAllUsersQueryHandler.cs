@@ -1,6 +1,6 @@
 ﻿using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Users.Repository;
-using MagnaWms.Contracts;
+using MagnaWms.Contracts.Users;
 using MagnaWms.Domain.UserAggregate;
 using MapsterMapper;
 using MediatR;

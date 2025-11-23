@@ -1,5 +1,5 @@
 ﻿using MagnaWms.Application.Core.Results;
-using MagnaWms.Contracts;
+using MagnaWms.Contracts.Receipts;
 using MediatR;
 
 namespace MagnaWms.Application.Receipts.Commands.ReceiveReceiptLine;

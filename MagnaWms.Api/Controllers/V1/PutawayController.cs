@@ -3,12 +3,12 @@ using MagnaWms.Api.Behaviors;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Putaway.Commands.ExecutePutaway;
 using MagnaWms.Application.Putaway.Commands.CreatePutawayTask;
-using MagnaWms.Contracts;
 using MagnaWms.Contracts.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using MagnaWms.Contracts.Putaway;
 
 namespace MagnaWms.Api.Controllers.V1;
 

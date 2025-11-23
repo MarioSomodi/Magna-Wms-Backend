@@ -2,8 +2,8 @@
 using MagnaWms.Application.Core.Errors;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Receipts.Repository;
-using MagnaWms.Contracts;
 using MagnaWms.Contracts.Errors;
+using MagnaWms.Contracts.Receipts;
 using MagnaWms.Domain.ReceiptAggregate;
 using MapsterMapper;
 using MediatR;

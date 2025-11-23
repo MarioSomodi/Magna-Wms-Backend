@@ -1,8 +1,8 @@
 ﻿using MagnaWms.Application.Core.Results;
-using MagnaWms.Contracts;
+using MagnaWms.Contracts.Receipts;
 using MediatR;
 
-namespace MagnaWms.Application.Receipts.Queries.GetReceipt;
+namespace MagnaWms.Application.Receipts.Queries.GetReceiptQuery;
 
 public sealed record GetReceiptQuery(long ReceiptId)
     : IRequest<Result<ReceiptDto>>;

@@ -1,5 +1,5 @@
 ﻿using MagnaWms.Application.Core.Results;
-using MagnaWms.Contracts;
+using MagnaWms.Contracts.Items;
 using MediatR;
 
 namespace MagnaWms.Application.Items.Queries.GetAllItems;

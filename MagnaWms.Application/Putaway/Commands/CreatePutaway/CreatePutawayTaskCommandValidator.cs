@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace MagnaWms.Application.Putaway.Commands.CreatePutawayTask;
+namespace MagnaWms.Application.Putaway.Commands.CreatePutaway;
 
 public sealed class CreatePutawayTaskCommandValidator : AbstractValidator<CreatePutawayTaskCommand>
 {

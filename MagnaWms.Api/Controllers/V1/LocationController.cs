@@ -2,7 +2,7 @@
 using MagnaWms.Api.Behaviors;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Locations.Queries.GetLocationsByWarehouseId;
-using MagnaWms.Contracts;
+using MagnaWms.Contracts.Locations;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

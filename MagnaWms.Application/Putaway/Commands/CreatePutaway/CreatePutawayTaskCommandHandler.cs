@@ -4,14 +4,14 @@ using MagnaWms.Application.Core.Errors;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Putaway.Repository;
 using MagnaWms.Application.Receipts.Repository;
-using MagnaWms.Contracts;
 using MagnaWms.Contracts.Errors;
+using MagnaWms.Contracts.Putaway;
 using MagnaWms.Domain.PutawayAggregate;
 using MagnaWms.Domain.ReceiptAggregate;
 using MapsterMapper;
 using MediatR;
 
-namespace MagnaWms.Application.Putaway.Commands.CreatePutawayTask;
+namespace MagnaWms.Application.Putaway.Commands.CreatePutaway;
 
 public sealed class CreatePutawayTaskCommandHandler
     : IRequestHandler<CreatePutawayTaskCommand, Result<PutawayTaskDto>>

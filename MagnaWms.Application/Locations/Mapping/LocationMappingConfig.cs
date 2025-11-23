@@ -1,4 +1,4 @@
-﻿using MagnaWms.Contracts;
+﻿using MagnaWms.Contracts.Locations;
 using MagnaWms.Domain.LocationAggregate;
 using Mapster;
 

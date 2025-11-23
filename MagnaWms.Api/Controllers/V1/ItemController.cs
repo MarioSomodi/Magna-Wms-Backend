@@ -2,7 +2,7 @@
 using MagnaWms.Api.Behaviors;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Items.Queries.GetAllItems;
-using MagnaWms.Contracts;
+using MagnaWms.Contracts.Items;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;

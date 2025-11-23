@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace MagnaWms.Application.Receipts.Queries.GetReceipt;
+namespace MagnaWms.Application.Receipts.Queries.GetReceiptQuery;
 
 public sealed class GetReceiptQueryValidator : AbstractValidator<GetReceiptQuery>
 {

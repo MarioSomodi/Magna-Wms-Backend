@@ -1,6 +1,6 @@
 ﻿using Mapster;
 using MagnaWms.Domain.WarehouseAggregate;
-using MagnaWms.Contracts;
+using MagnaWms.Contracts.Warehouses;
 
 namespace MagnaWms.Application.Warehouses.Mapping;
 

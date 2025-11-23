@@ -1,4 +1,4 @@
-﻿using MagnaWms.Contracts;
+﻿using MagnaWms.Contracts.Putaway;
 using MagnaWms.Domain.PutawayAggregate;
 using Mapster;
 

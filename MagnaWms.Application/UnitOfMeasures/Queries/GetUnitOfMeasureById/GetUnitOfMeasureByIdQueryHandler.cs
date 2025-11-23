@@ -3,9 +3,9 @@ using MapsterMapper;
 using MagnaWms.Application.Core.Results;
 using MagnaWms.Application.Core.Errors;
 using MagnaWms.Application.UnitOfMeasures.Repository;
-using MagnaWms.Contracts;
 using MagnaWms.Contracts.Errors;
 using MagnaWms.Domain.UnitOfMeasureAggregate;
+using MagnaWms.Contracts.UnitOfMeasures;
 
 namespace MagnaWms.Application.UnitOfMeasures.Queries.GetUnitOfMeasureById;
 

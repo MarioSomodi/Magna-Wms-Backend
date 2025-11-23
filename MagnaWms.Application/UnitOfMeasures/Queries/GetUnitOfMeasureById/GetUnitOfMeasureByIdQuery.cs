@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using MagnaWms.Application.Core.Results;
-using MagnaWms.Contracts;
+using MagnaWms.Contracts.UnitOfMeasures;
 
 namespace MagnaWms.Application.UnitOfMeasures.Queries.GetUnitOfMeasureById;
 
