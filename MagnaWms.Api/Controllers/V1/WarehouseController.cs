@@ -1,6 +1,10 @@
 ﻿using Asp.Versioning;
 using MagnaWms.Api.Behaviors;
 using MagnaWms.Application.Core.Results;
+using MagnaWms.Application.Warehouses.Command.ActivateWarehouse;
+using MagnaWms.Application.Warehouses.Command.CreateWarehouse;
+using MagnaWms.Application.Warehouses.Command.DeactivateWarehouse;
+using MagnaWms.Application.Warehouses.Command.UpdateWarehouse;
 using MagnaWms.Application.Warehouses.Queries.GetAllWarehouses;
 using MagnaWms.Application.Warehouses.Queries.GetWarehouseById;
 using MagnaWms.Contracts.Authorization;
@@ -74,4 +78,81 @@ public sealed class WarehouseController : ControllerBase
         );
     }
 
+    [HttpPost]
+    [Authorize(Policy = Permissions.WarehousesManage)]
+    [SwaggerOperation(Summary = "Create a new warehouse")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Warehouse created.", typeof(WarehouseDto))]
+    public async Task<ActionResult<WarehouseDto>> CreateAsync(
+    [FromBody] CreateWarehouseRequest request,
+    CancellationToken cancellationToken)
+    {
+        Result<WarehouseDto> result = await _mediator.Send(
+            new CreateWarehouseCommand(
+                request.Code,
+                request.Name,
+                request.Timezone),
+            cancellationToken);
+
+        return result.Match(
+            Ok,
+            error => this.ProblemResult(_magnaProblemDetailsFactory, error));
+    }
+
+    [HttpPut("{id:long}")]
+    [Authorize(Policy = Permissions.WarehousesManage)]
+    [SwaggerOperation(Summary = "Update an existing warehouse")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Warehouse updated.", typeof(WarehouseDto))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Warehouse not found.")]
+    public async Task<ActionResult<WarehouseDto>> UpdateAsync(
+    long id,
+    [FromBody] UpdateWarehouseRequest request,
+    CancellationToken cancellationToken)
+    {
+        Result<WarehouseDto> result = await _mediator.Send(
+            new UpdateWarehouseCommand(
+                id,
+                request.Name,
+                request.Timezone),
+            cancellationToken);
+
+        return result.Match(
+            Ok,
+            error => this.ProblemResult(_magnaProblemDetailsFactory, error));
+    }
+
+    [HttpGet("{id:long}/activate")]
+    [Authorize(Policy = Permissions.WarehousesManage)]
+    [SwaggerOperation(Summary = "Activate warehouse")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Warehouse activated.", typeof(WarehouseDto))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Warehouse not found.")]
+    public async Task<ActionResult<WarehouseDto>> ActivateAsync(
+    long id,
+    CancellationToken cancellationToken)
+    {
+        Result<WarehouseDto> result = await _mediator.Send(
+            new ActivateWarehouseCommand(id),
+            cancellationToken);
+
+        return result.Match(
+            Ok,
+            error => this.ProblemResult(_magnaProblemDetailsFactory, error));
+    }
+
+    [HttpGet("{id:long}/deactivate")]
+    [Authorize(Policy = Permissions.WarehousesManage)]
+    [SwaggerOperation(Summary = "Deactivate warehouse")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Warehouse deactivated.", typeof(WarehouseDto))]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Warehouse not found.")]
+    public async Task<ActionResult<WarehouseDto>> DeactivateAsync(
+        long id,
+        CancellationToken cancellationToken)
+    {
+        Result<WarehouseDto> result = await _mediator.Send(
+            new DeactivateWarehouseCommand(id),
+            cancellationToken);
+
+        return result.Match(
+            Ok,
+            error => this.ProblemResult(_magnaProblemDetailsFactory, error));
+    }
 }

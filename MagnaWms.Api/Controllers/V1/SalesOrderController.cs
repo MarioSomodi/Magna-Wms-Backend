@@ -51,7 +51,7 @@ public sealed class SalesOrderController : ControllerBase
     }
 
     /// <summary>Allocate a sales order.</summary>
-    [HttpPost("{id:long}/allocate")]
+    [HttpGet("{id:long}/allocate")]
     [SwaggerOperation(Summary = "Allocate a sales order")]
     [SwaggerResponse(StatusCodes.Status200OK, "Sales order allocated.", typeof(SalesOrderDto))]
     public async Task<ActionResult<SalesOrderDto>> Allocate(long id, CancellationToken ct)
@@ -64,7 +64,7 @@ public sealed class SalesOrderController : ControllerBase
     }
 
     /// <summary>Cancel a sales order.</summary>
-    [HttpPost("{id:long}/cancel")]
+    [HttpGet("{id:long}/cancel")]
     [SwaggerOperation(Summary = "Cancel a sales order")]
     [SwaggerResponse(StatusCodes.Status200OK, "Sales order cancelled.")]
     public async Task<ActionResult> Cancel(long id, CancellationToken ct)

@@ -78,7 +78,7 @@ public sealed class ReceiptController : ControllerBase
 
         return result.Match(Ok, e => this.ProblemResult(_pdf, e));
     }
-    [HttpPost("{id:long}/lines/{lineId:long}/receive")]
+    [HttpPost("{id:long}/lines/{lineId:long}/receive")] 
     [Authorize(Policy = Permissions.WarehousesManage)]
     [SwaggerOperation(Summary = "Receive quantity for a receipt line")]
     [SwaggerResponse(StatusCodes.Status200OK, "Receipt updated.", typeof(ReceiptDto))]
@@ -100,5 +100,4 @@ public sealed class ReceiptController : ControllerBase
 
         return result.Match(Ok, e => this.ProblemResult(_pdf, e));
     }
-
 }
